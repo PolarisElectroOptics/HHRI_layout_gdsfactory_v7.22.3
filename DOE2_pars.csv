@@ -1,0 +1,13 @@
+DUT,w_slot,w_slotWG,SlabT,PS_length,TWEdes,Z0,termination,w_OXOP,Slot WG dop,slabDOP,ContDop,s2s_type,X,Y
+1,0.18,0.18,0.05,850,PCH_v4_70,NA,70,6,NLD,Rail_1.0_NW,Rail_2.0_NP,power,0,2020
+2,0.18,0.18,0.05,850,PCH_v4_70+,NA,70,6,NLD,Rail_1.0_NW,Rail_2.0_NP,power,1580,2020
+3,0.18,0.18,0.05,850,PCH_v4_70-,NA,70,6,NLD,Rail_1.0_NW,Rail_2.0_NP,power,3160,2020
+4,0.16,0.18,0.05,850,PCH_v4_70,NA,70,6,NLD,Rail_1.0_NW,Rail_2.0_NP,power,4740,2020
+5,0.18,0.18,0.05,850,PCH_v4_84,NA,84,6,NLD,Rail_1.0_NW,Rail_2.0_NP,power,0,1010
+6,0.18,0.18,0.05,850,PCH_v4_84+,NA,84,6,NLD,Rail_1.0_NW,Rail_2.0_NP,power,1580,1010
+7,0.18,0.18,0.05,850,PCH_v4_84-,NA,84,6,NLD,Rail_1.0_NW,Rail_2.0_NP,power,3160,1010
+8,0.16,0.18,0.05,850,PCH_v4_84,NA,84,6,NLD,Rail_1.0_NW,Rail_2.0_NP,power,4740,1010
+9,0.18,0.18,0.05,850,PCH_v4_95,NA,95,6,NLD,Rail_1.0_NW,Rail_2.0_NP,power,0,0
+10,0.18,0.18,0.05,850,PCH_v4_95+,NA,95,6,NLD,Rail_1.0_NW,Rail_2.0_NP,power,1580,0
+11,0.18,0.18,0.05,850,PCH_v4_95-,NA,95,6,NLD,Rail_1.0_NW,Rail_2.0_NP,power,3160,0
+12,0.16,0.18,0.05,850,PCH_v4_95,NA,95,6,NLD,Rail_1.0_NW,Rail_2.0_NP,power,4740,0
