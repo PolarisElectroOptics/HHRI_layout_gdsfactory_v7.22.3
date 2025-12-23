@@ -1420,15 +1420,15 @@ def PS_connected_from_params(params: dict, position="") -> gf.Component:
     PS = PS_slotWG_SilTerra(params, position=position)
     ref_PS = c << PS
 
-    s2s_w_OXOP: float = None
-    if s2s_type == "oxide":
-        params["w_OXOP"] = 0
-    elif s2s_type == "FNG":
-        pass
-    elif s2s_type == "extra_slab":
-        params["extra_slab"] = True  # extra slab bool set in function params for DOE1-5 - can also be set through s2s_type also
-    else:
-        pass  # default fallback
+    # s2s_w_OXOP: float = None
+    # if s2s_type == "oxide":
+    #     params["w_OXOP"] = 0
+    # elif s2s_type == "FNG":
+    #     pass
+    # elif s2s_type == "extra_slab":
+    #     params["extra_slab"] = True  # extra slab bool set in function params for DOE1-5 - can also be set through s2s_type also
+    # else:
+    #     pass  # default fallback
 
     # Create input taper and connect
     if s2s_type == "adiabatic":

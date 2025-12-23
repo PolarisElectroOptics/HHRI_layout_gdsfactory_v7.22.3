@@ -8,7 +8,9 @@ from library_electrode_unified import *
 from library_electrode_params import *
 import pandas as pd
 
-combined_params = {**differential_electrode_params, **balun_sipho_params, "gsgsg_variant": "DC", "MT1_from_PS": False, "PS_trans_length": 250, "PS_taper": True, "DC_MT1": False, "s2s_type": "adiabatic",  #MMI, adiabatic, power
+combined_params = {**differential_electrode_params, **balun_sipho_params, "gsgsg_variant": "DC", "s2s_type": "adiabatic",  #MMI, adiabatic, power
+                    "PS_length": 1000,
+                    #"PS_sipho_length": 900,
                     "w_slot": 0.20,
                     "w_slotWG": 0.20,
                     "S2S_ADIA_W": 0.4,
@@ -45,11 +47,9 @@ combined_params = {**differential_electrode_params, **balun_sipho_params, "gsgsg
                     "PS_outer_gap_width": 15, #used for GSGSG only
                     "PS_outer_gnd_width": 50,#-40, #used for GSGSG only
 
-                    "PS_trans_length": 100,
 
                     "pad_t_length": 60,
             }
-combined_params["PS_length"] = 1000
 
 # here the cell building starts
 c = gf.Component("TOP")
