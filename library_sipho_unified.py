@@ -1472,6 +1472,15 @@ def PS_connected_from_params(params: dict, position="") -> gf.Component:
 
 @gf.cell
 def PS_connected_s2s_only(params: dict, extra_slab: bool = False, Oband_variant: bool = False, s2s_type="FNG") -> gf.Component:
+    '''
+    PS connected without PS
+    used for TCDoe s2s cascade test structure
+    :param params:
+    :param extra_slab:
+    :param Oband_variant:
+    :param s2s_type:
+    :return:
+    '''
     # s2s_type can be "FNG", "oxide", "extra_slab"
     c = gf.Component()
 
@@ -1523,126 +1532,6 @@ def PS_connected_s2s_only(params: dict, extra_slab: bool = False, Oband_variant:
 
     return c
 
-
-@gf.cell
-def MZM_GSG(
-        params: dict,
-        #trans_length: float,
-        taper_type: int,  # 1, 2, or 3
-        #termination: int,  # 35, 50, or 65 (ohms)
-        sig_trace: str,  # test_GSG_1 - test_GSG_4
-        extra_slab: bool = False,
-        Oband_variant: bool = False,
-        s2s_type: str = "FNG"  # s2s_type can be "FNG", "oxide", "extra_slab"
-) -> gf.Component:
-
-    c = gf.Component("MZM_GSG")
-    # PS = PS_connected_EES21(w_slot, w_OXOP, PS_length, gap_IND_WG)
-    PS = PS_connected_from_params(params=params, s2s_type=s2s_type)
-    ref_PS_1 = c << PS
-
-    # GSG = GSG_MT2_EES21(PS_length, trans_length, sig_trace, taper_type)
-    GSG = GSG_MT2(params, taper_type, sig_trace)
-    ref_GSG = c << GSG
-
-    ref_PS_1.connect("e_MT2", ref_GSG.ports["e_up"])
-
-    c.add_port("o1", port=ref_PS_1["o1"])
-    c.add_port("o3", port=ref_PS_1["o2"])
-
-    return c
-
-
-
-@gf.cell
-def MZM_GSG_balun(
-        params: dict,
-        # trans_length: float,
-        # taper_type: int,  # 1 or 2
-        # sig_trace: str,  # "narrow", "medium", or "wide"
-        # termination: int = 0,  # 35, 50, or 65 (ohms) or 0 to match input
-        # extra_slab: bool = False,
-        # config: str = "standard",  # "standard", "batch", "compact"
-        # gsgsg_variant: str = "default",  # or "S21", "DC", "sym"
-        # Oband_variant: bool = False,
-        # s2s_type: str = "FNG",  # s2s_type can be "FNG", "oxide", "extra_slab"
-        # ps_config: str = "unchanged", #"unchanged", "narrow_custom", "medium_custom", "wide_custom"
-        # gnds_shorted: bool = False
-
-) -> gf.Component:
-    """
-    ex:  mzm_1_ref = c << MZM_GSG_balun(mzm_1_params)
-    new version so that parameters can easily be read from CSV and placed in batches
-
-    ***functions called:***
-    PS_connected_from_parmams
-        s2s_from_params
-        PS_slotWG_SilTerra  - includes si contacts, off-center vias
-    GSG_MTX              - includes central vias, metal extension, vias in extension
-
-    ************************
-    :param params:
-    :param trans_length:
-    :param s2s_type: can be "FNG" (default), "oxide", "extra_slab"
-    :param extra_slab:
-    :param Oband_variant:
-    :param taper_type: s2s overrides, 1 or 2
-    :param sig_trace: ps overrides, "narrow" "medium" "wide"
-    :param ps_config: ps parameter overrides: "unchanged"(default), "narrow_custom" "medium_custom" "wide_custom":
-    :param termination:
-    if termination = 0, the terminating electrode pads will match the default pads for a symmetric electrode structure
-            if termination = 35, 50, 65, output pad geometry will be changed to the specified resistance. Also, heaters between the termination pads will be added.
-                also, these additional parameters must be specified in parameter dictionary: "htr_width_x", "htr_length", "htr_connect_length",
-                                                                                            "sc_length", "pad_t_length",  "trans_length_to_term"
-    :param gnds_shorted: bool, if True ground shorting structure will be added
-    :param gsgsg_variant: almost obsolete, only used to specify SGS_MT2_DC in DOE8
-    :param config: standard (default), batch, compact - used only in SGS_MT2_DC
-    :return:
-
-    """
-
-    #imports for legacy sub-functions
-    trans_length = params["trans_length"]
-    taper_type = params["taper_type"]
-    sig_trace = params["sig_trace"]
-    termination = params["termination"]
-    extra_slab = params["extra_slab"]
-    # config = params["config"]
-    # gsgsg_variant = params["gsgsg_variant"]
-    # Oband_variant = params["Oband_variant"]
-    # s2s_type  = params["s2s_type"]
-    # ps_config = params["ps_config"]
-    # gnds_shorted = params["gnds_shorted"]
-
-
-    num_rows_V1 = params["num_rows_V1"]
-
-    c = gf.Component("MZM_GSG_balun")
-
-    c = gf.Component()
-
-    # Create both arms of PS_connected
-    PS1 = PS_connected_from_params(params, position="right")
-    ref_PS_1 = c << PS1
-
-    PS2 = PS_connected_from_params(params, position="left")
-    ref_PS_2 = c << PS2
-
-    # Standard GSG variant
-    GSG = GSG_MTX(params, taper_type, sig_trace, termination=termination, layer_MTX = MT2)
-    ref_GSG = c << GSG
-
-    # Connect electrical ports
-    ref_PS_1.connect("e_MT2", ref_GSG.ports["e_up"])
-    ref_PS_2.connect("e_MT2", ref_GSG.ports["e_low"])
-
-    # Add optical ports
-    c.add_port("o1", port=ref_PS_1["o1"])
-    c.add_port("o3", port=ref_PS_1["o2"])
-    c.add_port("o2", port=ref_PS_2["o1"])
-    c.add_port("o4", port=ref_PS_2["o2"])
-
-    return c
 
 
 @gf.cell
@@ -1750,121 +1639,129 @@ c.show()
     return c
 
 
-@gf.cell
-def MZM_GSGSG_from_params(
-        params: dict,
-        trans_length: float,
-        taper_type: int,  # 1 or 2
-        sig_trace: str,  # "narrow", "medium", or "wide"
-        termination: int = 0,  # 35, 50, or 65 (ohms) or 0 to match input
-        electrode_params: dict = None,
-        extra_slab: bool = False,
-        config: str = "standard",  # "standard", "batch", "compact"
-        gsgsg_variant: str = "default",  # or "S21", "DC", "sym"
-        Oband_variant: bool = False,
-        s2s_type: str = "FNG",  # s2s_type can be "FNG", "oxide", "extra_slab"
-        ps_config: str = "unchanged", #"unchanged", "narrow_custom", "medium_custom", "wide_custom"
-        gnds_shorted: bool = False
-
-) -> gf.Component:
-    """
-
-    :param params:
-    :param trans_length:
-    :param s2s_type: can be "FNG" (default), "oxide", "extra_slab"
-    :param extra_slab:
-    :param Oband_variant:
 
 
-    The below are overrides and specifications for GSGSG_MT2
-    :param electrode_params
+# @gf.cell
+# def MZM_GSG( #unused for SilTerra
+#         params: dict,
+#         #trans_length: float,
+#         taper_type: int,  # 1, 2, or 3
+#         #termination: int,  # 35, 50, or 65 (ohms)
+#         sig_trace: str,  # test_GSG_1 - test_GSG_4
+#         extra_slab: bool = False,
+#         Oband_variant: bool = False,
+#         s2s_type: str = "FNG"  # s2s_type can be "FNG", "oxide", "extra_slab"
+# ) -> gf.Component:
+#
+#     c = gf.Component("MZM_GSG")
+#     # PS = PS_connected_EES21(w_slot, w_OXOP, PS_length, gap_IND_WG)
+#     PS = PS_connected_from_params(params=params, s2s_type=s2s_type)
+#     ref_PS_1 = c << PS
+#
+#     # GSG = GSG_MT2_EES21(PS_length, trans_length, sig_trace, taper_type)
+#     GSG = GSG_MT2(params, taper_type, sig_trace)
+#     ref_GSG = c << GSG
+#
+#     ref_PS_1.connect("e_MT2", ref_GSG.ports["e_up"])
+#
+#     c.add_port("o1", port=ref_PS_1["o1"])
+#     c.add_port("o3", port=ref_PS_1["o2"])
+#
+#     return c
 
-    :param taper_type: s2s overrides, 1 or 2
-    :param sig_trace: ps overrides, "narrow" "medium" "wide"
-    :param ps_config: ps parameter overrides: "unchanged"(default), "narrow_custom" "medium_custom" "wide_custom":
-    :param termination:
-    if termination = 0, the terminating electrode pads will match the default pads for a symmetric electrode structure
-            if termination = 35, 50, 65, output pad geometry will be changed to the specified resistance. Also, heaters between the termination pads will be added.
-                also, these additional parameters must be specified in parameter dictionary: "htr_width_x", "htr_length", "htr_connect_length",
-                                                                                            "sc_length", "pad_t_length",  "trans_length_to_term"
-    :param gnds_shorted: bool, if True ground shorting structure will be added
-    :param gsgsg_variant: almost obsolete, only used to specify SGS_MT2_DC in DOE8
-    :param config: standard (default), batch, compact - used only in SGS_MT2_DC
-    :return:
-    """
 
-    # Merge sipho and electrode parameters
-    if electrode_params is None:
-        # Get the corresponding electrode parameters based on DOE variant
-        doe_name = params.get("DOE_name", "DOE1")  # Default to DOE1 if not specified
 
-        if doe_name == "DOE1":
-            from library_electrode_params import electrode_DOE1_params
-            electrode_params = electrode_DOE1_params
-        elif doe_name == "DOE3":
-            from library_electrode_params import electrode_DOE3_params
-            electrode_params = electrode_DOE3_params
-        elif doe_name == "DOE4":
-            from library_electrode_params import electrode_DOE4_params
-            electrode_params = electrode_DOE4_params
-        elif doe_name == "DOE5":
-            from library_electrode_params import electrode_DOE5_params
-            electrode_params = electrode_DOE5_params
-        elif doe_name == "DOE6":
-            from library_electrode_params import electrode_DOE6_params
-            electrode_params = electrode_DOE6_params
-        elif doe_name == "DOE8":
-            from library_electrode_params import electrode_DOE8_params
-            electrode_params = electrode_DOE8_params
-        else:
-            # Fallback to DOE1 parameters
-            from library_electrode_params import electrode_DOE1_params
-            electrode_params = electrode_DOE1_params
+# @gf.cell
+# def MZM_GSG_balun( #unused for SilTerra
+#         params: dict,
+#         # trans_length: float,
+#         # taper_type: int,  # 1 or 2
+#         # sig_trace: str,  # "narrow", "medium", or "wide"
+#         # termination: int = 0,  # 35, 50, or 65 (ohms) or 0 to match input
+#         # extra_slab: bool = False,
+#         # config: str = "standard",  # "standard", "batch", "compact"
+#         # gsgsg_variant: str = "default",  # or "S21", "DC", "sym"
+#         # Oband_variant: bool = False,
+#         # s2s_type: str = "FNG",  # s2s_type can be "FNG", "oxide", "extra_slab"
+#         # ps_config: str = "unchanged", #"unchanged", "narrow_custom", "medium_custom", "wide_custom"
+#         # gnds_shorted: bool = False
+#
+# ) -> gf.Component:
+#     """
+#     ex:  mzm_1_ref = c << MZM_GSG_balun(mzm_1_params)
+#     new version so that parameters can easily be read from CSV and placed in batches
+#
+#     ***functions called:***
+#     PS_connected_from_parmams
+#         s2s_from_params
+#         PS_slotWG_SilTerra  - includes si contacts, off-center vias
+#     GSG_MTX              - includes central vias, metal extension, vias in extension
+#
+#     ************************
+#     :param params:
+#     :param trans_length:
+#     :param s2s_type: can be "FNG" (default), "oxide", "extra_slab"
+#     :param extra_slab:
+#     :param Oband_variant:
+#     :param taper_type: s2s overrides, 1 or 2
+#     :param sig_trace: ps overrides, "narrow" "medium" "wide"
+#     :param ps_config: ps parameter overrides: "unchanged"(default), "narrow_custom" "medium_custom" "wide_custom":
+#     :param termination:
+#     if termination = 0, the terminating electrode pads will match the default pads for a symmetric electrode structure
+#             if termination = 35, 50, 65, output pad geometry will be changed to the specified resistance. Also, heaters between the termination pads will be added.
+#                 also, these additional parameters must be specified in parameter dictionary: "htr_width_x", "htr_length", "htr_connect_length",
+#                                                                                             "sc_length", "pad_t_length",  "trans_length_to_term"
+#     :param gnds_shorted: bool, if True ground shorting structure will be added
+#     :param gsgsg_variant: almost obsolete, only used to specify SGS_MT2_DC in DOE8
+#     :param config: standard (default), batch, compact - used only in SGS_MT2_DC
+#     :return:
+#
+#     """
+#
+#     #imports for legacy sub-functions
+#     trans_length = params["trans_length"]
+#     taper_type = params["taper_type"]
+#     sig_trace = params["sig_trace"]
+#     termination = params["termination"]
+#     extra_slab = params["extra_slab"]
+#     # config = params["config"]
+#     # gsgsg_variant = params["gsgsg_variant"]
+#     # Oband_variant = params["Oband_variant"]
+#     # s2s_type  = params["s2s_type"]
+#     # ps_config = params["ps_config"]
+#     # gnds_shorted = params["gnds_shorted"]
+#
+#
+#     num_rows_V1 = params["num_rows_V1"]
+#
+#     c = gf.Component("MZM_GSG_balun")
+#
+#     c = gf.Component()
+#
+#     # Create both arms of PS_connected
+#     PS1 = PS_connected_from_params(params, position="right")
+#     ref_PS_1 = c << PS1
+#
+#     PS2 = PS_connected_from_params(params, position="left")
+#     ref_PS_2 = c << PS2
+#
+#     # Standard GSG variant
+#     GSG = GSG_MTX(params, taper_type, sig_trace, termination=termination, layer_MTX = MT2)
+#     ref_GSG = c << GSG
+#
+#     # Connect electrical ports
+#     ref_PS_1.connect("e_MT2", ref_GSG.ports["e_up"])
+#     ref_PS_2.connect("e_MT2", ref_GSG.ports["e_low"])
+#
+#     # Add optical ports
+#     c.add_port("o1", port=ref_PS_1["o1"])
+#     c.add_port("o3", port=ref_PS_1["o2"])
+#     c.add_port("o2", port=ref_PS_2["o1"])
+#     c.add_port("o4", port=ref_PS_2["o2"])
+#
+#     return c
 
-    # Create combined parameters dictionary
-    combined_params = {**params, **electrode_params}
 
-    # Create both arms of PS_connected
-    c = gf.Component("MZM_GSGSG_from_params")
-    params["extra_slab"] = extra_slab
-    params["Oband_variant"] = Oband_variant
-    params["s2s_type"] = s2s_type
-
-    PS1 = PS_connected_from_params(params)
-    ref_PS_1 = c << PS1
-
-    PS2 = PS_connected_from_params(params)
-    ref_PS_2 = c << PS2
-
-    # Choose GSGSG implementation
-    PS_length = params["PS_length"]
-    if gsgsg_variant == "DC":
-        # DOE8 specific DC variant
-        GSGSG = SGS_MT2_DC(PS_length, trans_length, taper_type, sig_trace, config=config, params=electrode_params)
-    # elif gsgsg_variant == "S21":
-    #     # DOE7 specific S21 variant
-    #     GSGSG = GSGSG_MT2_symmetric(PS_length, trans_length, taper_type, sig_trace, params=electrode_params, termination=termination, ps_config=ps_config)
-    # elif gsgsg_variant == "sym":
-    #     GSGSG = GSGSG_MT2_symmetric(PS_length, trans_length, taper_type, sig_trace, electrode_params,  termination=termination, ps_config=ps_config)
-    # elif gsgsg_variant == "bond":
-    #     GSGSG = GSGSG_MT2_symmetric(PS_length, trans_length, taper_type, sig_trace, electrode_params, termination=termination, ps_config=ps_config, gnds_shorted=True)
-    else:
-        # Standard GSGSG variant
-        GSGSG = GSGSG_MT2(PS_length, trans_length, taper_type, sig_trace, params=electrode_params, termination=termination, gnds_shorted = gnds_shorted)
-
-    ref_GSGSG = c << GSGSG
-
-    # Connect electrical ports
-    ref_PS_1.connect("e_MT2", ref_GSGSG.ports["e_up"])
-    ref_PS_2.connect("e_MT2", ref_GSGSG.ports["e_low"])
-
-    # Add optical ports
-    c.add_port("o1", port=ref_PS_1["o1"])
-    c.add_port("o3", port=ref_PS_1["o2"])
-    c.add_port("o2", port=ref_PS_2["o1"])
-    c.add_port("o4", port=ref_PS_2["o2"])
-
-    return c
 
 
 @gf.cell
@@ -3053,131 +2950,131 @@ def ocdrWG(params:dict, slotW, wgOff, wgOff1, wgWin, wgWfin, wgtL, slW, oxW, oxO
 
         return ribCell
 
-    @gf.cell
-    def wgCell(slotW, wgOff, wgOff1, wgWin, wgWfin, wgtL, xSlab, slW, oxW, oxOff, slWgL, dop1, dop2, dopOff, gapIND,
-               ribShape, ribPitch, ribDist):
-
-        wgCell = gf.Component()
-        # place two tapers
-        myS = wgCell.add_ref(
-            taper(slotW, wgOff, wgOff1, wgWin, wgWfin, wgtL, xSlab, slW, oxW, oxOff, slWgL, dop1, dop2, dopOff))
-        myS = wgCell.add_ref(
-            taper(slotW, wgOff, wgOff1, wgWin, wgWfin, wgtL, xSlab, slW, oxW, oxOff, slWgL, dop1, dop2, dopOff))
-        myS.mirror((0, 1)).movex(slWgL + 2 * (wgOff + wgOff1 + wgtL))
-
-        # place slot waveguide
-        w_slotWG = wgWfin - slotW / 2
-        w_slot = slotW
-
-        offset_slotWG = (w_slotWG + w_slot) / 2
-        s1 = gf.Section(width=w_slotWG, offset=offset_slotWG, layer=RIB, name="slotWG_1")
-        s2 = gf.Section(width=w_slotWG, offset=-offset_slotWG, layer=RIB, name="slotWG_2")
-
-        offset_slab = (w_slot + w_slab) / 2 + w_slotWG
-        s3 = gf.Section(width=(w_slab + buffer_RIB_SLAB_overlay * 2), offset=offset_slab, layer=SLAB, name="slab_1")
-        s4 = gf.Section(width=(w_slab + buffer_RIB_SLAB_overlay * 2), offset=-offset_slab, layer=SLAB, name="slab_2")
-
-        offset_si_contact = w_slot / 2 + w_slotWG + gap_si_contact + w_si_contact / 2
-        s5 = gf.Section(width=w_si_contact, offset=offset_si_contact, layer=RIB, name="si_contact_1")
-        s6 = gf.Section(width=w_si_contact, offset=-offset_si_contact, layer=RIB, name="sl_contact_2")
-
-        offset_MT1 = oxW / 2 + w_MT1 / 2 + min_gap_OXOP_MT
-        s7 = gf.Section(width=w_MT1, offset=offset_MT1, layer=MT1, name="MT1_1")
-        s8 = gf.Section(width=w_MT1, offset=-offset_MT1, layer=MT1, name="MT1_2")
-
-        offset_MT2 = oxW / 2 + w_MT1 / 2 + min_gap_OXOP_MT
-        s72 = gf.Section(width=w_MT1, offset=offset_MT2, layer=MT2, name="MT2_1")
-        s82 = gf.Section(width=w_MT1, offset=-offset_MT2, layer=MT2, name="MT2_2")
-
-        offset_via_1 = oxW / 2 + min_gap_OXOP_MT + min_inc_via_1 + via_size / 2
-        s9v = ComponentAlongPath(component=gf.c.via(size=(3, 3), layer=VIA1), spacing=via_size + gap_via_1,
-                                 padding=via_size, enclosure=min_inc_via_1, offset=offset_via_1)
-        s10v = ComponentAlongPath(component=gf.c.via(size=(3, 3), layer=VIA1), spacing=via_size + gap_via_1,
-                                  padding=via_size, enclosure=min_inc_via_1, offset=-offset_via_1)
-
-        offset_via_2 = oxW / 2 + min_gap_OXOP_MT + min_inc_via_1 + via_size + min_exc_of_via_2 + via_size / 2
-        s11v = ComponentAlongPath(component=gf.c.via(size=(3, 3), layer=VIA2), spacing=min_exc_of_via_2 + via_size,
-                                  padding=via_size, offset=offset_via_2)
-        s12v = ComponentAlongPath(component=gf.c.via(size=(3, 3), layer=VIA2), spacing=min_exc_of_via_2 + via_size,
-                                  padding=via_size, offset=-offset_via_2)
-
-        offset_NCONT = w_slot / 2 + w_slotWG + gap_NCONT_WG + w_NCONT / 2
-        s13 = gf.Section(width=w_NCONT, offset=offset_NCONT, layer=NCONT if dop2 == 'n' else PCONT, name="NCONT_1")
-        s14 = gf.Section(width=w_NCONT, offset=-offset_NCONT, layer=NCONT if dop1 == 'n' else PCONT, name="NCONT_2")
-
-        offset_IND = w_slot / 2 + w_slotWG + gapIND + w_IND / 2
-        s15 = gf.Section(width=w_IND, offset=offset_IND, layer=IND if dop2 == 'n' else IPD, name="IND_1")
-        s16 = gf.Section(width=w_IND, offset=-offset_IND, layer=IND if dop1 == 'n' else IPD, name="IND_2")
-
-        offset_NIM = w_NIM / 4
-        s17 = gf.Section(width=w_NIM / 2, offset=offset_NIM, layer=NIM if dop2 == 'n' else PIM, name="NIM_1")
-        s18 = gf.Section(width=w_NIM / 2, offset=-offset_NIM, layer=NIM if dop1 == 'n' else PIM, name="NIM_2")
-
-        s151 = gf.Section(width=oxW, layer=OXOP, name="oxide_open")
-
-        # print(ribShape, ribPitch)
-        if ribShape != []:
-            s1r = ComponentAlongPath(component=ribCell(ribShape, ribDist), spacing=ribPitch)
-            x1 = gf.CrossSection(
-                sections=(s1, s2, s3, s4, s5, s6, s7, s8, s72, s82, s13, s14, s15, s16, s17, s18, s151),
-                components_along_path=[s9v, s10v, s11v, s12v, s1r]
-            )
-        else:
-            x1 = gf.CrossSection(
-                sections=(s1, s2, s3, s4, s5, s6, s7, s8, s72, s82, s13, s14, s15, s16, s17, s18, s151),
-                components_along_path=[s9v, s10v, s11v, s12v]
-            )
-
-        p1 = gf.path.straight(length=slWgL)
-        p2 = gf.path.extrude(p1, x1)
-        myS = wgCell.add_ref(p2)
-        myS.movex(wgOff + wgOff1 + wgtL)
-        # add ports
-        wgCell.add_port(name='o1', center=(0, 0), width=0.5, orientation=0, layer=RIB, port_type="optical")
-        wgCell.add_port(name='o2', center=(wgCell.xsize, 0), width=0.5, orientation=0, layer=RIB, port_type="optical")
-        return wgCell
-
-    c = gf.Component()
-
-    # add cascade
-    a = wgCell(slotW, wgOff, wgOff1, wgWin, wgWfin, wgtL, xSlab, slW, oxW, oxOff, slWgL, dop1, dop2, dopOff, gapIND,
-               ribShape, ribPitch, ribDist)
-    # c.add_ref(a,columns=rep, spacing=(a.xsize,0))
-    mySeg = []
-    for i in range(rep):
-        mySeg.append(c.add_ref(a))
-        myPos = (a.xsize + 1.0) * i + round(((0.5 if i > 0 else 0.5) - 0.5) * 1.0, 3)
-        #myPos = (a.xsize + 1.0) * i + round(((random.random() if i > 0 else 0.5) - 0.5) * 1.0, 3)
-        mySeg[-1].move((myPos, 0))
-    # connect
-    for i in range(1, rep):
-        route = gf.routing.get_bundle_from_steps(
-            mySeg[i - 1].ports["o2"], mySeg[i].ports["o1"],
-            width=0.41, cross_section=rib_Oband)[0]
-        c.add(route.references)
-
-    # if rep>1 add metal connections
-    if rep > 1:
-        offset_MT2 = oxW / 2 + min_gap_OXOP_MT
-        c.add_polygon(
-            [(0, offset_MT2), (c.xsize, offset_MT2), (c.xsize, offset_MT2 + w_MT1), (0, offset_MT2 + w_MT1)],
-            layer=MT1)
-        c.add_polygon([(0, -offset_MT2), (c.xsize, -offset_MT2), (c.xsize, -(offset_MT2 + w_MT1)),
-                       (0, -(offset_MT2 + w_MT1))], layer=MT1)
-
-    # add ports
-    c.add_port(name="o1", center=(0, 0), width=0.5, orientation=0, layer=RIB, port_type="optical")
-    c.add_port(name="o2", center=(myPos + a.xsize, 0), width=0.5, orientation=0, layer=RIB, port_type="optical")
-    c.add_port(name="e1", center=(wgOff + wgOff1 + wgtL, 12), width=0.5, orientation=0, layer=MT1,
-               port_type="electrical")
-    c.add_port(name="e2", center=(wgOff + wgOff1 + wgtL, -12), width=0.5, orientation=0, layer=MT1,
-               port_type="electrical")
-    c.add_port(name="e3", center=(myPos + a.xsize, 12), width=0.5, orientation=0, layer=MT1, port_type="electrical")
-    c.add_port(name="e4", center=(myPos + a.xsize, -12), width=0.5, orientation=0, layer=MT1,
-               port_type="electrical")
-
-
-    return c
+    # @gf.cell
+    # def wgCell(slotW, wgOff, wgOff1, wgWin, wgWfin, wgtL, xSlab, slW, oxW, oxOff, slWgL, dop1, dop2, dopOff, gapIND,
+    #            ribShape, ribPitch, ribDist): #obsolete, AMF process, GLM style of placement
+    #
+    #     wgCell = gf.Component()
+    #     # place two tapers
+    #     myS = wgCell.add_ref(
+    #         taper(slotW, wgOff, wgOff1, wgWin, wgWfin, wgtL, xSlab, slW, oxW, oxOff, slWgL, dop1, dop2, dopOff))
+    #     myS = wgCell.add_ref(
+    #         taper(slotW, wgOff, wgOff1, wgWin, wgWfin, wgtL, xSlab, slW, oxW, oxOff, slWgL, dop1, dop2, dopOff))
+    #     myS.mirror((0, 1)).movex(slWgL + 2 * (wgOff + wgOff1 + wgtL))
+    #
+    #     # place slot waveguide
+    #     w_slotWG = wgWfin - slotW / 2
+    #     w_slot = slotW
+    #
+    #     offset_slotWG = (w_slotWG + w_slot) / 2
+    #     s1 = gf.Section(width=w_slotWG, offset=offset_slotWG, layer=RIB, name="slotWG_1")
+    #     s2 = gf.Section(width=w_slotWG, offset=-offset_slotWG, layer=RIB, name="slotWG_2")
+    #
+    #     offset_slab = (w_slot + w_slab) / 2 + w_slotWG
+    #     s3 = gf.Section(width=(w_slab + buffer_RIB_SLAB_overlay * 2), offset=offset_slab, layer=SLAB, name="slab_1")
+    #     s4 = gf.Section(width=(w_slab + buffer_RIB_SLAB_overlay * 2), offset=-offset_slab, layer=SLAB, name="slab_2")
+    #
+    #     offset_si_contact = w_slot / 2 + w_slotWG + gap_si_contact + w_si_contact / 2
+    #     s5 = gf.Section(width=w_si_contact, offset=offset_si_contact, layer=RIB, name="si_contact_1")
+    #     s6 = gf.Section(width=w_si_contact, offset=-offset_si_contact, layer=RIB, name="sl_contact_2")
+    #
+    #     offset_MT1 = oxW / 2 + w_MT1 / 2 + min_gap_OXOP_MT
+    #     s7 = gf.Section(width=w_MT1, offset=offset_MT1, layer=MT1, name="MT1_1")
+    #     s8 = gf.Section(width=w_MT1, offset=-offset_MT1, layer=MT1, name="MT1_2")
+    #
+    #     offset_MT2 = oxW / 2 + w_MT1 / 2 + min_gap_OXOP_MT
+    #     s72 = gf.Section(width=w_MT1, offset=offset_MT2, layer=MT2, name="MT2_1")
+    #     s82 = gf.Section(width=w_MT1, offset=-offset_MT2, layer=MT2, name="MT2_2")
+    #
+    #     offset_via_1 = oxW / 2 + min_gap_OXOP_MT + min_inc_via_1 + via_size / 2
+    #     s9v = ComponentAlongPath(component=gf.c.via(size=(3, 3), layer=VIA1), spacing=via_size + gap_via_1,
+    #                              padding=via_size, enclosure=min_inc_via_1, offset=offset_via_1)
+    #     s10v = ComponentAlongPath(component=gf.c.via(size=(3, 3), layer=VIA1), spacing=via_size + gap_via_1,
+    #                               padding=via_size, enclosure=min_inc_via_1, offset=-offset_via_1)
+    #
+    #     offset_via_2 = oxW / 2 + min_gap_OXOP_MT + min_inc_via_1 + via_size + min_exc_of_via_2 + via_size / 2
+    #     s11v = ComponentAlongPath(component=gf.c.via(size=(3, 3), layer=VIA2), spacing=min_exc_of_via_2 + via_size,
+    #                               padding=via_size, offset=offset_via_2)
+    #     s12v = ComponentAlongPath(component=gf.c.via(size=(3, 3), layer=VIA2), spacing=min_exc_of_via_2 + via_size,
+    #                               padding=via_size, offset=-offset_via_2)
+    #
+    #     offset_NCONT = w_slot / 2 + w_slotWG + gap_NCONT_WG + w_NCONT / 2
+    #     s13 = gf.Section(width=w_NCONT, offset=offset_NCONT, layer=NCONT if dop2 == 'n' else PCONT, name="NCONT_1")
+    #     s14 = gf.Section(width=w_NCONT, offset=-offset_NCONT, layer=NCONT if dop1 == 'n' else PCONT, name="NCONT_2")
+    #
+    #     offset_IND = w_slot / 2 + w_slotWG + gapIND + w_IND / 2
+    #     s15 = gf.Section(width=w_IND, offset=offset_IND, layer=IND if dop2 == 'n' else IPD, name="IND_1")
+    #     s16 = gf.Section(width=w_IND, offset=-offset_IND, layer=IND if dop1 == 'n' else IPD, name="IND_2")
+    #
+    #     offset_NIM = w_NIM / 4
+    #     s17 = gf.Section(width=w_NIM / 2, offset=offset_NIM, layer=NIM if dop2 == 'n' else PIM, name="NIM_1")
+    #     s18 = gf.Section(width=w_NIM / 2, offset=-offset_NIM, layer=NIM if dop1 == 'n' else PIM, name="NIM_2")
+    #
+    #     s151 = gf.Section(width=oxW, layer=OXOP, name="oxide_open")
+    #
+    #     # print(ribShape, ribPitch)
+    #     if ribShape != []:
+    #         s1r = ComponentAlongPath(component=ribCell(ribShape, ribDist), spacing=ribPitch)
+    #         x1 = gf.CrossSection(
+    #             sections=(s1, s2, s3, s4, s5, s6, s7, s8, s72, s82, s13, s14, s15, s16, s17, s18, s151),
+    #             components_along_path=[s9v, s10v, s11v, s12v, s1r]
+    #         )
+    #     else:
+    #         x1 = gf.CrossSection(
+    #             sections=(s1, s2, s3, s4, s5, s6, s7, s8, s72, s82, s13, s14, s15, s16, s17, s18, s151),
+    #             components_along_path=[s9v, s10v, s11v, s12v]
+    #         )
+    #
+    #     p1 = gf.path.straight(length=slWgL)
+    #     p2 = gf.path.extrude(p1, x1)
+    #     myS = wgCell.add_ref(p2)
+    #     myS.movex(wgOff + wgOff1 + wgtL)
+    #     # add ports
+    #     wgCell.add_port(name='o1', center=(0, 0), width=0.5, orientation=0, layer=RIB, port_type="optical")
+    #     wgCell.add_port(name='o2', center=(wgCell.xsize, 0), width=0.5, orientation=0, layer=RIB, port_type="optical")
+    #     return wgCell
+    #
+    # c = gf.Component()
+    #
+    # # add cascade
+    # a = wgCell(slotW, wgOff, wgOff1, wgWin, wgWfin, wgtL, xSlab, slW, oxW, oxOff, slWgL, dop1, dop2, dopOff, gapIND,
+    #            ribShape, ribPitch, ribDist)
+    # # c.add_ref(a,columns=rep, spacing=(a.xsize,0))
+    # mySeg = []
+    # for i in range(rep):
+    #     mySeg.append(c.add_ref(a))
+    #     myPos = (a.xsize + 1.0) * i + round(((0.5 if i > 0 else 0.5) - 0.5) * 1.0, 3)
+    #     #myPos = (a.xsize + 1.0) * i + round(((random.random() if i > 0 else 0.5) - 0.5) * 1.0, 3)
+    #     mySeg[-1].move((myPos, 0))
+    # # connect
+    # for i in range(1, rep):
+    #     route = gf.routing.get_bundle_from_steps(
+    #         mySeg[i - 1].ports["o2"], mySeg[i].ports["o1"],
+    #         width=0.41, cross_section=rib_Oband)[0]
+    #     c.add(route.references)
+    #
+    # # if rep>1 add metal connections
+    # if rep > 1:
+    #     offset_MT2 = oxW / 2 + min_gap_OXOP_MT
+    #     c.add_polygon(
+    #         [(0, offset_MT2), (c.xsize, offset_MT2), (c.xsize, offset_MT2 + w_MT1), (0, offset_MT2 + w_MT1)],
+    #         layer=MT1)
+    #     c.add_polygon([(0, -offset_MT2), (c.xsize, -offset_MT2), (c.xsize, -(offset_MT2 + w_MT1)),
+    #                    (0, -(offset_MT2 + w_MT1))], layer=MT1)
+    #
+    # # add ports
+    # c.add_port(name="o1", center=(0, 0), width=0.5, orientation=0, layer=RIB, port_type="optical")
+    # c.add_port(name="o2", center=(myPos + a.xsize, 0), width=0.5, orientation=0, layer=RIB, port_type="optical")
+    # c.add_port(name="e1", center=(wgOff + wgOff1 + wgtL, 12), width=0.5, orientation=0, layer=MT1,
+    #            port_type="electrical")
+    # c.add_port(name="e2", center=(wgOff + wgOff1 + wgtL, -12), width=0.5, orientation=0, layer=MT1,
+    #            port_type="electrical")
+    # c.add_port(name="e3", center=(myPos + a.xsize, 12), width=0.5, orientation=0, layer=MT1, port_type="electrical")
+    # c.add_port(name="e4", center=(myPos + a.xsize, -12), width=0.5, orientation=0, layer=MT1,
+    #            port_type="electrical")
+    #
+    #
+    # return c
 
 @gf.cell
 def OCDR_DOEcell_from_csv_params(combined_params: dict, ocdrDOE: str, wg_L = 6): #requires DOE_pars.csv in same folder, change?
