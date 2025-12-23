@@ -32,7 +32,7 @@ combined_params = {**differential_electrode_params, **balun_sipho_params, "gsgsg
                     "pad_sig_width": 80,
                     # "pad_outer_gap_width": 20,
                     # "pad_outer_gnd_width": 80,  # 200-7.5,
-                    "pad_length": 100,
+                    "pad_length": 150,
 
                     "S2S_center_gnd_width": 50,
                     "S2S_inner_gap_width": 16,
@@ -46,7 +46,7 @@ combined_params = {**differential_electrode_params, **balun_sipho_params, "gsgsg
                     "PS_sig_width": 40,
                     "PS_outer_gap_width": 15, #used for GSGSG only
                     "PS_outer_gnd_width": 50,#-40, #used for GSGSG only
-
+                    "trans_length": 250,
 
                     "pad_t_length": 60,
             }
