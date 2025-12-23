@@ -118,20 +118,20 @@ def PEO_custom_via_from_line(
     return c
 
 
-def GSG_piece_old(pad_center_gnd_width, pad_inner_gap_width, pad_sig_width, pad_outer_gap_width, pad_outer_gnd_width, pad_length, layer_MT2):
-    p = gf.path.straight(length=pad_length, npoints=2)
-
-    off_s1 = pad_center_gnd_width/2 + pad_inner_gap_width + pad_sig_width/2
-    s1 = gf.Section(width=pad_sig_width, offset=off_s1, layer=layer_MT2, name="sig1")
-
-    s0 = gf.Section(width=pad_center_gnd_width, offset=0, layer=layer_MT2, name="center gnd", port_names=("e1", "e2"), port_types=("electrical", "electrical"))
-
-    off_s2 = pad_center_gnd_width/2 + pad_inner_gap_width + pad_sig_width + pad_outer_gap_width + pad_outer_gnd_width/2
-    s2 = gf.Section(width=pad_outer_gnd_width, offset=off_s2, layer=layer_MT2, name="outer gnd1")
-
-    x1 = gf.CrossSection(sections=(s0,s1,s2))
-    generate = gf.path.extrude(p, x1)
-    return generate, x1
+# def GSG_piece_old(pad_center_gnd_width, pad_inner_gap_width, pad_sig_width, pad_outer_gap_width, pad_outer_gnd_width, pad_length, layer_MT2): #obsolete
+#     p = gf.path.straight(length=pad_length, npoints=2)
+#
+#     off_s1 = pad_center_gnd_width/2 + pad_inner_gap_width + pad_sig_width/2
+#     s1 = gf.Section(width=pad_sig_width, offset=off_s1, layer=layer_MT2, name="sig1")
+#
+#     s0 = gf.Section(width=pad_center_gnd_width, offset=0, layer=layer_MT2, name="center gnd", port_names=("e1", "e2"), port_types=("electrical", "electrical"))
+#
+#     off_s2 = pad_center_gnd_width/2 + pad_inner_gap_width + pad_sig_width + pad_outer_gap_width + pad_outer_gnd_width/2
+#     s2 = gf.Section(width=pad_outer_gnd_width, offset=off_s2, layer=layer_MT2, name="outer gnd1")
+#
+#     x1 = gf.CrossSection(sections=(s0,s1,s2))
+#     generate = gf.path.extrude(p, x1)
+#     return generate, x1
 
 
 def GSG_piece(params, pad_center_gnd_width, pad_inner_gap_width, pad_sig_width, pad_outer_gap_width, pad_outer_gnd_width, pad_length, layer_MTX, slot=False, layer_MTX_SLOT=MT3_SLOT, num_rows_slot = 1 ):
