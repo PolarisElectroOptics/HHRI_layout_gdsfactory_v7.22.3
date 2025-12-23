@@ -960,6 +960,7 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
 
     return c
 
+@gf.cell
 def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
     """
         Unified phase shifter slot waveguide with all parameter variations.
@@ -1275,7 +1276,7 @@ def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
 
     return c
 
-
+@gf.cell
 def PS_slotWG_from_params(params: dict, Oband_variant) -> gf.Component:
     """
         AMF version
