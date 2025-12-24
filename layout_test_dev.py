@@ -195,7 +195,8 @@ combined_params = {**differential_electrode_params, **balun_sipho_params, "gsgsg
 
                     "pad_t_length": 60,
             }
-_ = c << MZM_SilTerra(combined_params)
+#_ = c << MZM_SilTerra(combined_params)
+_ = c << s2s_adiabatic(combined_params)
 
 c.show()
 

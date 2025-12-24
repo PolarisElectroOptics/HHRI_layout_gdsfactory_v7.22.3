@@ -39,10 +39,10 @@ Exclusion = (57, 0)
 
 
 SLOT_ETCH = (30, 2)
-RIB = (275, 0)      #WG_HM
-RIB_ETCH = (101, 251) #WG_Strip
+RIB = WG_HM     #WG_HM
+RIB_ETCH = WG_Strip #WG_Strip
 
-SLAB = (100, 90)     #WG_LowRib
+SLAB = WG_LowRib     #WG_LowRib
 SLAB_COR=(33, 1)   #METCH_COR   #not used SilTerra
 
 SWG_DUMMY_BLOCK = (92, 0) #Replace w NOFILL -
