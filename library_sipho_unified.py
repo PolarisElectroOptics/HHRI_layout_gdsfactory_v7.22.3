@@ -24,6 +24,7 @@ import random #both these used only in DOE6 + 7 - pd is used for GLM's flow of r
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt #temp
+from shapely.geometry.polygon import Polygon
 
 
 '''Table of Contents:
@@ -837,7 +838,7 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     x_D6 = [L1, L1+L2+L3]
     y_D6 = [-(w_slab+w_slot/2+w_slotWG), -(w_slab+w_slot/2+w_slotWG)]
 
-    #add P1
+    #add P1 #top half of slab
     x_p = np.concatenate((x_D1, np.flip(x_D2[2:])))
     y_p = np.concatenate((y_D1, np.flip(y_D2[2:])))
     x_p = np.concatenate((x_p, np.flip(x0)))
@@ -854,7 +855,7 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     # c.add_polygon(P2)
     # # c.add_polygon([x_p, y_p], layer=RIB)
 
-    #add P2_2 - central METCH_COR
+    #add P2_2 -slot + slotWG
     x_D2_truncate = x_D2[1:]
     y_D2_truncate = y_D2[1:]
     x_D2_truncate = np.concatenate(([-L1-s2s_O_len_in, -L1], x_D2_truncate))
@@ -864,7 +865,7 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     x_p = np.concatenate((x_p, [L1, -L1, -L1-s2s_O_len_in]))
     y_p = np.concatenate((y_p, [-T/2, -W/2, -W/2]))
     P2 = gf.Polygon(list(zip(x_p, y_p)), layer=WG_HM)
-    c.add_polygon(P2, layer=WG_Strip) #save for slot removal
+    #c.add_polygon(P2, layer=WG_Strip) #
 
     #add P3 - slot etch
     x_D3_truncate = np.concatenate((x1, x_D3[2:]))
@@ -874,13 +875,15 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     x_p = np.concatenate((x_p, np.flip(x1)))
     y_p = np.concatenate((y_p, np.flip(y_S1_lower-(G+R-C2) - y_1)))
     P3 = gf.Polygon(list(zip(x_p, y_p)), layer=WG_HM)
-    c.add_polygon(P3, layer=WG_Strip)
+    s_P3 = Polygon(zip(x_p, y_p))
+    s_P3 = s_P3.buffer(params["buffer_RIB_SLAB_overlay"], join_style="bevel")
+    c.add_polygon(s_P3, layer=WG_Strip)
 
     c_P2 = gf.Component()
     c_P2.add_polygon(P2)
     c_P3 = gf.Component()
     c_P3.add_polygon(P3)
-    c_sub_result = gf.geometry.boolean(A=c_P2, B=c_P3, operation="not", layer=WG_HM)
+    c_sub_result = gf.geometry.boolean(A=c_P2, B=c_P3, operation="not", layer=WG_HM) #subtract slot from slot + slotWG
     c << c_sub_result
 
     # #add P4
@@ -896,7 +899,7 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     c.add_polygon(P5)
 
 
-    coords = ([-L1-s2s_O_len_in, w_slab+w_slot/2+w_slotWG], [L1, w_slab+w_slot/2+w_slotWG],
+    coords = ([-L1-s2s_O_len_in, w_slab+w_slot/2+w_slotWG], [L1, w_slab+w_slot/2+w_slotWG], #left half of WG_Strip block
               [L1, -(w_slab+w_slot/2+w_slotWG)], [-L1-s2s_O_len_in, -(w_slab+w_slot/2+w_slotWG)])
     P6 = gf.Polygon(coords, layer=WG_Strip)
 
@@ -906,6 +909,12 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     c_P6.add_polygon(P6)
     c_sub_result = gf.geometry.boolean(A=c_P6, B=c, operation="not", layer=WG_Strip)
     c << c_sub_result
+
+    coords = ([-L1 - s2s_O_len_in, w_slab + w_slot / 2 + w_slotWG], [L1+L2+L3, w_slab + w_slot / 2 + w_slotWG],  # left half of WG_Strip block
+              [L1+L2+L3, -(w_slab + w_slot / 2 + w_slotWG)], [-L1 - s2s_O_len_in, -(w_slab + w_slot / 2 + w_slotWG)])
+    c.add_polygon(coords, layer=WG_LowRib)
+    
+
     # plt.plot(x_D5, y_D5)
     # plt.show()
 
