@@ -144,7 +144,7 @@ ps_SilTerra_sipho_params = {
     "w_slotWG": 0.2,  # Different
     "w_routing": 0.4,
     "w_slab": 4,
-    "buffer_RIB_SLAB_overlay": 0,#0.1,
+    "buffer_RIB_SLAB_overlay": 0.1,
     "w_OXOP": 5,
 
     "w_impl_window": 40,
