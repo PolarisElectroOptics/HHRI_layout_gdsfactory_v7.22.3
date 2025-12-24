@@ -794,6 +794,7 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
 
     L1_lower_slope = (W/2-T/2)/(2*L1)
     y_S1_lower = L1_lower_slope*(x1+L1) - W/2 #right half of bottom of W to T taper
+    y_S0_lower = L1_lower_slope*(x0+L1) - W/2  # left half of bottom of W to T taper
 
     L3_slope =  ( S/2 -(-T/2))/L3
     y_S3 = L3_slope*(x3 -(L1+L2)) -T/2; #bottom of upper rail in L3
@@ -913,6 +914,14 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     coords = ([-L1 - s2s_O_len_in, w_slab + w_slot / 2 + w_slotWG], [L1+L2+L3, w_slab + w_slot / 2 + w_slotWG],  # left half of WG_Strip block
               [L1+L2+L3, -(w_slab + w_slot / 2 + w_slotWG)], [-L1 - s2s_O_len_in, -(w_slab + w_slot / 2 + w_slotWG)])
     c.add_polygon(coords, layer=WG_LowRib)
+
+    x_lower = np.concatenate((x0, x1))
+    y_lower = np.concatenate((y_S0_lower, y_S1_lower))
+
+    x_y_lower = list(zip(np.flip(x_lower), np.flip(y_lower))) #using acutal points does not fix problem of small gap for some reason
+    coords = ([-L1 - s2s_O_len_in, W/2], [0,L1_slope * (L1) + W/2],[L1,-T/4], [L1, -T/2],
+              [0,-(L1_slope * (L1) + W/2+0.001)],[-L1 - s2s_O_len_in, -W/2-0.001])  # fill in -L1 input portion of WG with WG_Strip, taper to slot
+    c.add_polygon(coords, layer=WG_Strip) #0.002 is fudge factor, seems to be precision errors from using 2 points instead of full line with 50
     
 
     # plt.plot(x_D5, y_D5)
