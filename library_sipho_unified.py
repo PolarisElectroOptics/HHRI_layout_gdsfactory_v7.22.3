@@ -857,14 +857,14 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     #add P2_2 - central METCH_COR
     x_D2_truncate = x_D2[1:]
     y_D2_truncate = y_D2[1:]
-    x_D2_truncate = np.concatenate(([-L1], x_D2_truncate))
-    y_D2_truncate = np.concatenate(([W/2], y_D2_truncate))
+    x_D2_truncate = np.concatenate(([-L1-s2s_O_len_in, -L1], x_D2_truncate))
+    y_D2_truncate = np.concatenate(([W/2, W/2], y_D2_truncate))
     x_p = np.concatenate((x_D2_truncate, np.flip(x_D5)))
     y_p = np.concatenate((y_D2_truncate, np.flip(y_D5)))
-    x_p = np.concatenate((x_p, [L1, -L1]))
-    y_p = np.concatenate((y_p, [-T/2, -W/2]))
+    x_p = np.concatenate((x_p, [L1, -L1, -L1-s2s_O_len_in]))
+    y_p = np.concatenate((y_p, [-T/2, -W/2, -W/2]))
     P2 = gf.Polygon(list(zip(x_p, y_p)), layer=WG_HM)
-    #c.add_polygon(P2) #save for slot removal
+    c.add_polygon(P2, layer=WG_Strip) #save for slot removal
 
     #add P3 - slot etch
     x_D3_truncate = np.concatenate((x1, x_D3[2:]))
@@ -895,6 +895,17 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     P5 = gf.Polygon(list(zip(x_p, y_p)), layer=WG_LowRib)
     c.add_polygon(P5)
 
+
+    coords = ([-L1-s2s_O_len_in, offset_si_contact+params["w_si_contact"]/2], [L1, offset_si_contact+params["w_si_contact"]/2],
+              [L1, -offset_si_contact-params["w_si_contact"]/2], [-L1-s2s_O_len_in, -offset_si_contact-params["w_si_contact"]/2])
+    P6 = gf.Polygon(coords, layer=WG_Strip)
+
+    c_P5 = gf.Component()
+    c_P5.add_polygon(P5)
+    c_P6 = gf.Component()
+    c_P6.add_polygon(P6)
+    c_sub_result = gf.geometry.boolean(A=c_P6, B=c, operation="not", layer=WG_Strip)
+    c << c_sub_result
     # plt.plot(x_D5, y_D5)
     # plt.show()
 
