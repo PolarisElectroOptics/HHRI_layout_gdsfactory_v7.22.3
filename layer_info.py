@@ -6,7 +6,7 @@ WG_LowRib = (100, 90)
 
 Impl_Window = (127, 60)
 N_Impl = (257, 0)
-NP_Impl = (257, 0)
+NP_Impl = (259, 0)
 NPP_Impl = (261, 0)
 
 Salicide = (128, 60)
