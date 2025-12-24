@@ -328,9 +328,9 @@ def GSG_MRM_SilTerra(params : dict):
     PS_gap_width = params["PS_inner_gap_width"]
     PS_S_width = params["PS_sig_width"]
 
-    S2S_G_width = params["S2S_center_gnd_width"]
-    S2S_gap_width = params["S2S_inner_gap_width"]
-    S2S_S_width = params["S2S_sig_width"]
+    S2S_G_width = PS_G_width
+    S2S_gap_width = PS_gap_width
+    S2S_S_width = PS_S_width
     S2S_length = params["S2S_length"]
 
     trans_length = params["trans_length"]
@@ -391,6 +391,15 @@ def GSG_MRM_SilTerra(params : dict):
         width=1,
         orientation=0, 
         layer=MT2,
+        port_type="electrical",
+    )
+    
+    c.add_port(
+        name="e_MRM",
+        center=(pad_length + trans_length, 0),
+        width=1,
+        orientation=0, 
+        layer=UTM2,
         port_type="electrical",
     )
     

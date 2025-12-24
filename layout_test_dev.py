@@ -180,20 +180,20 @@ combined_params = {**differential_electrode_params, **SilTerra_sipho_params, "gs
                     # "pad_outer_gnd_width": 80,  # 200-7.5,
                     "pad_length": 100,
 
-                    "S2S_center_gnd_width": 50,
-                    "S2S_inner_gap_width": 16,
-                    "S2S_sig_width": 40,
+                    # "S2S_center_gnd_width": 58,
+                    # "S2S_inner_gap_width": 16,
+                    # "S2S_sig_width": 40,
                     # "S2S_outer_gap_width": 5,
                     # "S2S_outer_gnd_width": 60,
                     "S2S_length": 50,
 
-                    "PS_center_gnd_width": 50,
-                    "PS_inner_gap_width": 16,
+                    "PS_center_gnd_width": 63,  #coupling_length +(bend_r-7.5)*2
+                    "PS_inner_gap_width": 15,
                     "PS_sig_width": 40,
                     # "PS_outer_gap_width": 15, #used for GSGSG only
                     # "PS_outer_gnd_width": 50,#-40, #used for GSGSG only
 
-                    "trans_length": 250,
+                    "trans_length": 150,
                     "PS_length": 50,
 
                     # "PS_trans_length": 0,
