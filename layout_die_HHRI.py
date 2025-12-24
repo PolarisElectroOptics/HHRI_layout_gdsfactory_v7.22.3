@@ -8,7 +8,7 @@ from library_electrode_unified import *
 from library_electrode_params import *
 import pandas as pd
 
-combined_params = {**differential_electrode_params, **balun_sipho_params, "gsgsg_variant": "DC", "s2s_type": "adiabatic",  #MMI, adiabatic, power
+combined_params = {**differential_electrode_params, **SilTerra_sipho_params, "gsgsg_variant": "DC", "s2s_type": "adiabatic",  #MMI, adiabatic, power
                     "PS_length": 50,
                     #"PS_sipho_length": 900,
                     "w_slot": 0.20,

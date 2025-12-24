@@ -1167,11 +1167,11 @@ def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
         offset_silicide = offset_via_contact + gap_silicide
         s_silicide_contact_top = sections_short_sh.append(gf.Section(width=silicide_width, offset=(offset_silicide), layer=SB, name="SB_PS"))
         s_silicide_contact_bot = sections_short_sh.append(gf.Section(width=silicide_width, offset=-(offset_silicide), layer=SB, name="SB_PS"))
-
-        s_silicide_contact_top = sections_extended.append(gf.Section(width=silicide_width, offset=(offset_silicide), layer=SLAB, name="SB_PS"))
-        s_silicide_contact_bot = sections_extended.append(gf.Section(width=silicide_width, offset=-(offset_silicide), layer=SLAB, name="SB_PS"))
-        s_silicide_contact_top = sections_extended.append(gf.Section(width=silicide_width, offset=(offset_silicide), layer=WG_HM, name="SB_PS"))
-        s_silicide_contact_bot = sections_extended.append(gf.Section(width=silicide_width, offset=-(offset_silicide), layer=WG_HM, name="SB_PS"))
+        #
+        # s_silicide_contact_top = sections_extended.append(gf.Section(width=silicide_width, offset=(offset_silicide), layer=SLAB, name="SB_PS"))
+        # s_silicide_contact_bot = sections_extended.append(gf.Section(width=silicide_width, offset=-(offset_silicide), layer=SLAB, name="SB_PS"))
+        # s_silicide_contact_top = sections_extended.append(gf.Section(width=silicide_width, offset=(offset_silicide), layer=WG_HM, name="SB_PS"))
+        # s_silicide_contact_bot = sections_extended.append(gf.Section(width=silicide_width, offset=-(offset_silicide), layer=WG_HM, name="SB_PS"))
 
 
         s_LT = sections.append(gf.Section(width=w_OXOP, layer=OXOP, name="oxide open"))
@@ -1209,15 +1209,15 @@ def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
     m1_overplot_lt = 2
     x6 = gf.CrossSection(sections=sections_short_sh, components_along_path=components_along_path)
     if params["s2s_type"] == "adiabatic":
-        p6 = gf.path.straight(length=PS_length - .4 + 2*(params["S2S_ADIA_L2"] + params["S2S_ADIA_L3"]) + 0.1)
+        p6 = gf.path.straight(length=PS_length + 2*(params["S2S_ADIA_L2"] + params["S2S_ADIA_L3"]-0.45))
         PS_short_sh = gf.path.extrude(p6, x6)
         _ = c << PS_short_sh
-        _.movex(-(params["S2S_ADIA_L2"] + params["S2S_ADIA_L3"] + 0.1) + 0.25)  # vg1_gap + vg1_overplot_lt - m1_overplot_lt)
+        _.movex(-(params["S2S_ADIA_L2"] + params["S2S_ADIA_L3"]) + 0.45)  # vg1_gap + vg1_overplot_lt - m1_overplot_lt)
     else:
-        p6 = gf.path.straight(length=PS_length - .4)
+        p6 = gf.path.straight(length=PS_length - .9)
         PS_short_sh = gf.path.extrude(p6, x6)
         _ = c << PS_short_sh
-        _.movex(0.2)  # vg1_gap + vg1_overplot_lt - m1_overplot_lt)
+        _.movex(0.45)  # vg1_gap + vg1_overplot_lt - m1_overplot_lt)
 
 
     vg1_overplot_lt = 3

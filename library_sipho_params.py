@@ -147,7 +147,7 @@ ps_SilTerra_sipho_params = {
     "buffer_RIB_SLAB_overlay": 0.1,
     "w_OXOP": 5,
 
-    "w_FETCH_CLD": 20,
+    "w_impl_window": 40,
 
     # doping regions
     "w_NIM": 6,
@@ -161,23 +161,23 @@ ps_SilTerra_sipho_params = {
 
     # conductive path structures
 
-    "w_si_contact": 13.5,  # 10.5,
+    "w_si_contact": 9.5,  # 10.5,
     "gap_si_contact": -2.25,
    # "gap_silicide":,
-    "silicide_width": 3,
+    "silicide_width": 3.5,
     "gap_silicide": 0.55,
     "electrical": True,
-    "num_rows_CONTACT": 3,
-    "via_size_contact": (0.35, 0.35),
-    "gap_via_contact": 0.45,
+    "num_rows_CONTACT": 2,
+    "via_size_contact": (0.8, 0.8),
+    "gap_via_contact": 0.6,
 
     "extension_electrical": 3,
 
     "w_MT1": 20,#13,
     "min_gap_OXOP_MT": 5,
     "num_rows_V1": 3,
-    "via_size_1": 0.35,#unused in 2 layer setup
-    "gap_via_1": 0.45,
+    "via_size_1": 0.8,#unused in 2 layer setup
+    "gap_via_1": 0.6,
     "slot_size_MT1": (1.5, 1.5),
     "slot_gap_MT1": 10,
     
@@ -187,8 +187,8 @@ ps_SilTerra_sipho_params = {
     "num_rows_V2": 2,
     "min_exc_of_via_2": 0.2,#CHECK
 
-    "via_size_top": 0.35,
-    "gap_via_top": 0.45,
+    "via_size_top": 0.8,
+    "gap_via_top": 0.6,
 }
 
 

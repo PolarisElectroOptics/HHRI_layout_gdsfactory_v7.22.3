@@ -177,7 +177,7 @@
   <marked>false</marked>
   <xfill>false</xfill>
   <animation>0</animation>
-  <name/>
+  <name>UTM</name>
   <source>173/0@1</source>
  </properties>
  <properties>
@@ -195,7 +195,7 @@
   <marked>false</marked>
   <xfill>false</xfill>
   <animation>0</animation>
-  <name/>
+  <name>UTM2</name>
   <source>197/0@1</source>
  </properties>
  <properties>
