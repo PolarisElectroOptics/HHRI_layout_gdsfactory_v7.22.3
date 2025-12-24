@@ -153,11 +153,6 @@ from shapely.geometry.polygon import Polygon
 # c.show()
 # #
 
-c = gf.Component("MZM_DC_SilTerra")
-combined_params = {**differential_electrode_params, **balun_sipho_params, "gsgsg_variant": "DC", "s2s_type": "adiabatic",  #MMI, adiabatic, power
-                    "PS_length": 50,
-                    #"PS_sipho_length": 900,
-}
 c = gf.Component("Test_SilTerra")
 combined_params = {**differential_electrode_params, **SilTerra_sipho_params, "gsgsg_variant": "DC", "MT1_from_PS": False, "PS_trans_length": 250, "PS_taper": True, "DC_MT1": False, "s2s_type": "adiabatic",  #MMI, adiabatic, power
 
@@ -205,8 +200,6 @@ combined_params = {**differential_electrode_params, **SilTerra_sipho_params, "gs
                     "pad_t_length": 60,
             }
 combined_params["PS_length"] = 50
-
-# _ = c << MZM_SilTerra(combined_params)
 
 _ = c << MRM_SilTerra(combined_params)
 
