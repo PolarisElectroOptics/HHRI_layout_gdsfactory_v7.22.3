@@ -206,12 +206,17 @@ combined_params = {**differential_electrode_params, **SilTerra_sipho_params, "gs
 
                     "pad_t_length": 60,
             }
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 _ = c << MZM_SilTerra(combined_params)
 =======
 combined_params["PS_length"] = 50
 _ = c << MRM_SilTerra(combined_params)
 >>>>>>> Stashed changes
+=======
+#_ = c << MZM_SilTerra(combined_params)
+_ = c << s2s_adiabatic(combined_params)
+>>>>>>> f6d59fb39a039d5cddd19a3586e0db02ffae5e76
 
 c.show()
 
