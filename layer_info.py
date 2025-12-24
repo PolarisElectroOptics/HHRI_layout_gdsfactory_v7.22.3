@@ -6,7 +6,7 @@ WG_LowRib = (100, 90)
 
 Impl_Window = (127, 60)
 N_Impl = (257, 0)
-NP_Impl = (259, 0)
+NP_Impl = (257, 0)
 NPP_Impl = (261, 0)
 
 Salicide = (128, 60)
@@ -39,11 +39,11 @@ Exclusion = (57, 0)
 
 
 SLOT_ETCH = (30, 2)
-RIB = (31, 1)      #FETCH_COR
-RIB_ETCH = (31, 2) #FETCH_CLD
+RIB = (275, 0)      #WG_HM
+RIB_ETCH = (101, 251) #WG_Strip
 
-SLAB = (33, 2)      #METCH_CLD   #need to switch in design..
-SLAB_COR=(33, 1)   #METCH_COR   #duplicate of RIB aka FETCH_COR
+SLAB = (100, 90)     #WG_LowRib
+SLAB_COR=(33, 1)   #METCH_COR   #not used SilTerra
 
 SWG_DUMMY_BLOCK = (92, 0) #Replace w NOFILL -
 
@@ -51,18 +51,18 @@ GRAT = (11, 121)   #Not used in Crealights.
 
 
 SB = (36, 0)        #SA (silicide)
-NIM = (23, 0)      #NLD              # Si implant N
+NIM = (257, 0)     #NLD              # Si implant N
 PIM = (24, 0)      #PLD      # Si implant P
 
-IND = (21, 0)      #NW   # Si intermediate N
+IND = (257, 0)      #NW   # Si intermediate N
 IPD = (22, 0)      #PW  # Si intermediate P
 
-NCONT = (27, 0)     #NP             # Si implant N++
+NCONT = (261, 0)     #NP             # Si implant N++
 PCONT = (28, 0)     #PP             # Si implant P++
 
-CONTACT = (50, 0)   #CA (contact)
+CONTACT = (268, 0)   #CA (contact)
 VIA1 = UTV      #via1
-VIA2 = (27, 0)      #via2 #NOT USED IN CREALIGHTS
+VIA2 = (27, 0)      #via2 #NOT USED IN SilTerra
 
 MT1 = UTM        #metal1
 MT1_SLOT = (11, 20)

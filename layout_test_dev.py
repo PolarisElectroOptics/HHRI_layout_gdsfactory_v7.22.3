@@ -153,8 +153,9 @@ from shapely.geometry.polygon import Polygon
 # c.show()
 # #
 c = gf.Component("MZM_DC_SilTerra")
-combined_params = {**differential_electrode_params, **balun_sipho_params, "gsgsg_variant": "DC", "MT1_from_PS": False, "PS_trans_length": 250, "PS_taper": True, "DC_MT1": False, "s2s_type": "adiabatic",  #MMI, adiabatic, power
-
+combined_params = {**differential_electrode_params, **balun_sipho_params, "gsgsg_variant": "DC", "s2s_type": "adiabatic",  #MMI, adiabatic, power
+                    "PS_length": 1000,
+                    #"PS_sipho_length": 900,
                     "w_slot": 0.20,
                     "w_slotWG": 0.20,
                     "S2S_ADIA_W": 0.4,
@@ -170,17 +171,13 @@ combined_params = {**differential_electrode_params, **balun_sipho_params, "gsgsg
                     "S2S_ADIA_B3": 5,
                     "S2S_ADIA_C1": 0.525,
                     "S2S_ADIA_C2": 0.13,
-                    # "htr_bridge_place": True,
-                    # "htr_bridge_width": 4,
-                    # "htr_bridge_pitch": 90,
-                    # "htr_bridge_reps": 3,
 
-                    "pad_center_gnd_width": 65,
-                    "pad_inner_gap_width": 35,
-                    "pad_sig_width": 65,
-                    "pad_outer_gap_width": 35,
-                    "pad_outer_gnd_width": 65,  # 200-7.5,
-                    "pad_length": 60,
+                    "pad_center_gnd_width": 80,
+                    "pad_inner_gap_width": 20,
+                    "pad_sig_width": 80,
+                    # "pad_outer_gap_width": 20,
+                    # "pad_outer_gnd_width": 80,  # 200-7.5,
+                    "pad_length": 150,
 
                     "S2S_center_gnd_width": 50,
                     "S2S_inner_gap_width": 16,
@@ -194,14 +191,10 @@ combined_params = {**differential_electrode_params, **balun_sipho_params, "gsgsg
                     "PS_sig_width": 40,
                     "PS_outer_gap_width": 15, #used for GSGSG only
                     "PS_outer_gnd_width": 50,#-40, #used for GSGSG only
-
-                    "PS_trans_length": 100,
+                    "trans_length": 250,
 
                     "pad_t_length": 60,
-                    
-
             }
-combined_params["PS_length"] = 1000
 _ = c << MZM_SilTerra(combined_params)
 
 c.show()

@@ -111,16 +111,16 @@ ps_balun_sipho_params = { #default for SYSTEM DIE 1, leave as is
     "gap_silicide": 0.55,
     "electrical": True,
     "num_rows_CONTACT": 3,
-    "via_size_contact": (0.35, 0.35),
-    "gap_via_contact": 0.45,
+    "via_size_contact": (0.8, 0.8),
+    "gap_via_contact": 0.6,
 
     "extension_electrical": 3,
 
     "w_MT1": 5,#13,
     "min_gap_OXOP_MT": 5,
     "num_rows_V1": 3,
-    "via_size_1": 0.35,#unused in 2 layer setup
-    "gap_via_1": 0.45,
+    "via_size_1": 0.8,#unused in 2 layer setup
+    "gap_via_1": 0.6,
     "slot_size_MT1": (1.5, 1.5),
     "slot_gap_MT1": 10,
     
