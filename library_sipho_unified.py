@@ -90,7 +90,7 @@ def PEO_place_array(function, default_params, doe_CSV, n_rows:int, n_cols:int, p
 #default CrossSection, used in MMI s-waveguides and some test structures
 # @xsection
 def rib_Oband(
-        width: float = 0.38,
+        width: float = 0.4,
         layer: LayerSpec = (10, 0),
         radius: float = 15.0,
         radius_min: float = 5,
@@ -99,7 +99,7 @@ def rib_Oband(
 ) -> CrossSection:
     """Return Strip cross_section."""
     s0=gf.Section(width=width, offset=0, layer=(10031, 1), port_names=("o1", "o2"))
-    # layer (1031,1) is a help layer that will be replaced by (31,1) in merge_clad function
+    # layer (1031,1) is a help layer that will be replaced by (31,1) in _clad function
     s1 = gf.Section(width=width_clad * 2 + width, offset=0, layer=(10031, 2))
     # layer (1031,2) is a help layer that will be merged and replaced by layer (31,2) in merge_clad function
     ##not needed for now s2 = gf.Section(width=width_clad, offset=- width/2 - width_clad/2, layer=(131,2))
@@ -114,7 +114,7 @@ def rib_Oband(
 # @xsection
 
 def rib(
-        width: float = 0.5,
+        width: float = 0.4,
         layer: LayerSpec = (10, 0),
         radius: float = 15.0,
         radius_min: float = 5,
@@ -200,7 +200,7 @@ def merge_clad(c, rad_round = 2):
     c.add_polygon(ss, layer = (31,2))
     """
     #remap help layer to functioning layer
-    c.remap_layers({(10031,1):(31,1)})
+    c.remap_layers({(10031,1):RIB})
 
     #remove help layer
     d = c.remove_layers(layers=((10031,2),))
@@ -3570,6 +3570,151 @@ def GCDOEcell(gcDOEfile, l):
     # fid.close()
     return c
 
+
+@gf.cell
+def MRM_SilTerra(params: dict) -> gf.Component:
+    """
+    new version so that parameters can easily be read from CSV and placed in batches
+    :param params:
+    :param trans_length:
+    :param s2s_type: can be "FNG" (default), "oxide", "extra_slab"
+    :param extra_slab:
+    :param Oband_variant:
+
+    The below are overrides and specifications for GSGSG_MT2
+    :param electrode_params
+
+    :param taper_type: s2s overrides, 1 or 2
+    :param sig_trace: ps overrides, "narrow" "medium" "wide"
+    :param ps_config: ps parameter overrides: "default"(default), "narrow_custom" "medium_custom" "wide_custom":
+    :param termination:
+    if termination = 0, the terminating electrode pads will match the default pads for a symmetric electrode structure
+            if termination = 35, 50, 65, output pad geometry will be changed to the specified resistance. Also, heaters between the termination pads will be added.
+                also, these additional parameters must be specified in parameter dictionary: "htr_width_x", "htr_length", "htr_connect_length",
+                                                                                            "sc_length", "pad_t_length",  "trans_length_to_term"
+    :param gnds_shorted: bool, if True ground shorting structure will be added
+    :param gsgsg_variant: almost obsolete, only used to specify SGS_MT2_DC in DOE8
+    :param config: standard (default), batch, compact - used only in SGS_MT2_DC
+    :return:
+
+    example:
+    c = gf.Component("Mirach_diff_MZM_GSGSG_taper_sample_2025_12_05")
+    combined_params = {**differential_electrode_params, **balun_sipho_params,  "PS_trans_length": 250}
+    combined_params["PS_length"] = 1000
+    _ = c << MZM_SilTerra(combined_params)
+    #_.rotate(-90)
+    c.show()
+
+    c = gf.Component("Mirach_diff_MZM_GSGSG_s2s_adiabatic_sample_2025_12_05")
+combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_from_PS": False, "PS_trans_length": 250, "PS_taper": True, "DC_MT1": True, "s2s_type": "adiabatic",
+                   "W": 0.4,
+                   "W0": 0.13,
+                   "R": 0.18,
+                   "S": 0.16,
+                   "G": 0.16,
+                   "L1": 4,
+                   "L2": 4,
+                   "L3": 8,
+                   "B1": 2.5,
+                   "B2": 0.9,
+                   "B3": 2,
+                   "C1": 0.5,
+                   "C2": 0.13,
+            }
+combined_params["PS_length"] = 600
+_ = c << MZM_SilTerra(combined_params)
+#_.rotate(-90)
+c.show()
+    """
+    #imports for legacy sub-functions
+    w_routing = params["w_routing"]
+    w_FETCH_CLD = params["w_FETCH_CLD"]
+    
+    trans_length = params["trans_length"]
+    taper_type = params["taper_type"]
+    sig_trace = params["sig_trace"]
+    termination = params["termination"]
+    extra_slab = params["extra_slab"]
+    config = params["config"]
+    gsgsg_variant = params["gsgsg_variant"]
+    Oband_variant = params["Oband_variant"]
+    s2s_type  = params["s2s_type"]
+    ps_config = params["ps_config"]
+    gnds_shorted = params["gnds_shorted"]
+    
+    coupling_length = 48
+    coupling_gap = 0.25
+    bus_length = coupling_length
+    bus_extend = 50
+
+    bend_r = 15
+    
+    c = gf.Component()
+
+    ref_bus = c << gf.components.straight(length=bus_length, cross_section = rib_Oband)
+    ref_coupling = c << gf.components.straight(length=coupling_length, cross_section = rib_Oband)
+    ref_coupling.movey(coupling_gap+w_routing)
+ 
+    ref_bend_1 = c << gf.components.bend_euler(radius=bend_r, angle=90, npoints=40, cross_section = rib_Oband)
+    ref_bend_1.connect('o1', ref_coupling.ports["o2"])
+    ref_bend_4 = c << gf.components.bend_euler(radius=bend_r, angle=90, npoints=40, cross_section = rib_Oband)
+    ref_bend_4.connect('o2', ref_coupling.ports["o1"])
+
+    ref_bus_ext1 = c << gf.components.straight(length=bus_length, cross_section = rib_Oband)
+    ref_bus_ext1.connect('o1', ref_bus.ports["o2"])
+    ref_bus_ext2 = c << gf.components.straight(length=bus_length, cross_section = rib_Oband)
+    ref_bus_ext2.connect('o2', ref_bus.ports["o1"])   
+
+    
+    # Create two PS_connected
+    PS1 = PS_connected_from_params(params)
+    ref_PS_1 = c << PS1
+    ref_PS_1.connect("o1", ref_bend_1["o2"])
+
+    PS2 = PS_connected_from_params(params)
+    ref_PS_2 = c << PS2
+    ref_PS_2.connect("o2", ref_bend_4["o1"])
+
+    ref_bend_2 = c << gf.components.bend_euler(radius=bend_r, angle=90, npoints=40, cross_section = rib_Oband)
+    ref_bend_2.connect('o1', ref_PS_1.ports["o2"])
+ 
+    ref_bend_3 = c << gf.components.bend_euler(radius=bend_r, angle=90, npoints=40, cross_section = rib_Oband)
+    ref_bend_3.connect('o2', ref_PS_2.ports["o1"])
+
+    routes = gf.routing.get_bundle(
+        ref_bend_2.ports["o2"],
+        ref_bend_3.ports["o1"],
+        # layer=RIB,
+        cross_section=rib_Oband
+    )
+    for route in routes:
+        c.add(route.references)
+
+    c = merge_clad(c, 0)
+
+    # # Choose GSGSG implementation
+    # PS_length = params["PS_length"]
+    # if gsgsg_variant == "DC":
+    #     # DOE8 specific DC variant
+    #     GSGSG = SGS_MT2_DC(PS_length, trans_length, taper_type, sig_trace, config=config, params=params)
+    # # elif gsgsg_variant == "bond":
+    # #     GSGSG = GSGSG_MT2_symmetric(PS_length, trans_length, taper_type, sig_trace, electrode_params, termination=termination, ps_config=ps_config, gnds_shorted=True)
+    # else:
+    #     # Standard GSGSG variant
+    #     GSGSG = GSGSG_MT2(PS_length, trans_length, taper_type, sig_trace, params=params, termination=termination, gnds_shorted = gnds_shorted, ps_config = ps_config)
+
+    # ref_SGS = c << GSGSG
+
+    # # Connect electrical ports
+    # ref_PS_1.connect("e_MT2", ref_SGS.ports["e_up"])
+    # ref_PS_2.connect("e_MT2", ref_SGS.ports["e_low"])
+
+    # Add optical ports
+    c.add_port("o1", port=ref_bus_ext2["o1"])
+    c.add_port("o2", port=ref_bus_ext1["o2"])
+
+
+    return c
 
 @gf.cell
 def OpticalAligner(                              #optical alignment
