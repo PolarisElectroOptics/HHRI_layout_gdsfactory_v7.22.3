@@ -3571,6 +3571,8 @@ def GCDOEcell(gcDOEfile, l):
     return c
 
 
+
+
 @gf.cell
 def MRM_SilTerra(params: dict) -> gf.Component:
     """
@@ -3646,7 +3648,6 @@ c.show()
     coupling_gap = 0.25
     bus_length = coupling_length
     bus_extend = 50
-
     bend_r = 15
     
     c = gf.Component()
@@ -3665,7 +3666,6 @@ c.show()
     ref_bus_ext2 = c << gf.components.straight(length=bus_length, cross_section = rib_Oband)
     ref_bus_ext2.connect('o2', ref_bus.ports["o1"])   
 
-    
     # Create two PS_connected
     PS1 = PS_connected_from_params(params)
     ref_PS_1 = c << PS1
@@ -3690,7 +3690,7 @@ c.show()
     for route in routes:
         c.add(route.references)
 
-    c = merge_clad(c, 0)
+    ref_UTM2 = c << GSG_MRM_SilTerra(params)
 
     # # Choose GSGSG implementation
     # PS_length = params["PS_length"]
@@ -3713,6 +3713,8 @@ c.show()
     c.add_port("o1", port=ref_bus_ext2["o1"])
     c.add_port("o2", port=ref_bus_ext1["o2"])
 
+
+    c = merge_clad(c, 0)
 
     return c
 

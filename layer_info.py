@@ -39,13 +39,13 @@ Exclusion = (57, 0)
 
 
 SLOT_ETCH = (30, 2)
-<<<<<<< Updated upstream
+
 RIB = (275, 0)      #WG_HM
 RIB_ETCH = (101, 251) #WG_Strip
-=======
+
 RIB = WG_HM      #FETCH_COR
 RIB_ETCH = WG_Strip #FETCH_CLD
->>>>>>> Stashed changes
+
 
 SLAB = (100, 90)     #WG_LowRib
 SLAB_COR=(33, 1)   #METCH_COR   #not used SilTerra

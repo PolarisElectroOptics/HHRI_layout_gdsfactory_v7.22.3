@@ -218,6 +218,184 @@ def SGS_piece(
     return comp, x1
 
 
+def SGS_piece_SilTerra(
+    pad_G_width: float,
+    pad_gap_width: float,
+    pad_S_width: float,
+    pad_length: float,
+    layer_MT2,  # Can be int or tuple
+) -> tuple[Component, CrossSection]:
+    """
+    Creates a symmetric GSG (Ground-Signal-Ground) electrical cross-section structure.
+
+    Args:
+        pad_G_width: Width of the central ground trace.
+        pad_gap_width: Gap between center ground and signal traces.
+        pad_S_width: Width of signal traces (both top and bottom).
+        pad_length: Length of the extruded section.
+        layer_MT2: Layer specification (int or tuple).
+
+    Returns:
+        A tuple containing:
+        - The extruded GSG component
+        - The associated CrossSection object
+    """
+    # Handle both integer and tuple layer formats
+    layer_spec = (layer_MT2, 0) if isinstance(layer_MT2, int) else layer_MT2
+    
+    # Create straight path
+    p = gf.path.straight(length=pad_length, npoints=2)
+
+    # Define trace sections
+    s0 = gf.Section(
+        width=pad_G_width,
+        offset=0,
+        layer=layer_spec,
+        name="center gnd",
+        port_names=("e1", "e2"),
+        port_types=("electrical", "electrical")
+    )
+
+    off_s1 = pad_G_width / 2 + pad_gap_width + pad_S_width / 2
+    s1 = gf.Section(width=pad_S_width, offset=off_s1, layer=layer_spec, name="sig1")
+    s11 = gf.Section(width=pad_S_width, offset=-off_s1, layer=layer_spec, name="sig2")
+
+    # Build cross-section and extrude
+    x1 = gf.CrossSection(sections=(s0, s1, s11))
+    comp = gf.path.extrude(p, x1)
+
+    return comp, x1
+
+def GSG_piece_SilTerra(
+    pad_G_width: float,
+    pad_gap_width: float,
+    pad_S_width: float,
+    pad_length: float,
+    layer_MT2,  # Can be int or tuple
+) -> tuple[Component, CrossSection]:
+    """
+    Creates a symmetric GSG (Ground-Signal-Ground) electrical cross-section structure.
+
+    Args:
+        pad_G_width: Width of the central ground trace.
+        pad_gap_width: Gap between center ground and signal traces.
+        pad_S_width: Width of signal traces (both top and bottom).
+        pad_length: Length of the extruded section.
+        layer_MT2: Layer specification (int or tuple).
+
+    Returns:
+        A tuple containing:
+        - The extruded GSG component
+        - The associated CrossSection object
+    """
+    # Handle both integer and tuple layer formats
+    layer_spec = (layer_MT2, 0) if isinstance(layer_MT2, int) else layer_MT2
+    
+    # Create straight path
+    p = gf.path.straight(length=pad_length, npoints=2)
+
+    # Define trace sections
+    s0 = gf.Section(
+        width=pad_G_width,
+        offset=0,
+        layer=layer_spec,
+        name="center gnd",
+        port_names=("e1", "e2"),
+        port_types=("electrical", "electrical")
+    )
+
+    off_s1 = pad_G_width / 2 + pad_gap_width + pad_S_width / 2
+    s1 = gf.Section(width=pad_S_width, offset=off_s1, layer=layer_spec, name="sig1")
+    s11 = gf.Section(width=pad_S_width, offset=-off_s1, layer=layer_spec, name="sig2")
+
+    # Build cross-section and extrude
+    x1 = gf.CrossSection(sections=(s0, s1, s11))
+    comp = gf.path.extrude(p, x1)
+
+    return comp, x1
+
+
+@gf.cell 
+# def GSG_MRM_SilTerra(PS_length, trans_length, params : dict):
+def GSG_MRM_SilTerra(params : dict):
+   
+    pad_G_width = params["pad_center_gnd_width"]
+    pad_gap_width = params["pad_inner_gap_width"]
+    pad_S_width = params["pad_sig_width"]
+    pad_length = params["pad_length"]
+
+    PS_G_width = params["PS_center_gnd_width"] #we should just call the params directly when needed..
+    PS_gap_width = params["PS_inner_gap_width"]
+    PS_S_width = params["PS_sig_width"]
+
+    S2S_G_width = params["S2S_center_gnd_width"]
+    S2S_gap_width = params["S2S_inner_gap_width"]
+    S2S_S_width = params["S2S_sig_width"]
+    S2S_length = params["S2S_length"]
+
+    trans_length = params["trans_length"]
+    PS_length = params["PS_length"]
+    sc_length = params["sc_length"]
+
+    spacing_x = params["spacing_x"]
+    spacing_y = params["spacing_y"]
+    DC_pad_size_x = params["DC_pad_size_x"]
+    DC_pad_size_y = params["DC_pad_size_y"]
+    pads_rec_gap = params["pads_rec_gap"]    
+
+    c = gf.Component()
+    
+    # Build components (common structure)
+    # Input contact pads
+    pad_in, x1 = GSG_piece_SilTerra(pad_G_width, pad_gap_width, pad_S_width, pad_length, UTM2)
+    _ = c << pad_in
+    pad_in_PAD, _ = GSG_piece_SilTerra(pad_G_width-10, pad_gap_width+10, pad_S_width-10, pad_length-10, PadAl)
+    _ = c << pad_in_PAD
+    _.movex(5)
+
+    # S2S 1
+    s2s_1, x2 = GSG_piece_SilTerra(S2S_G_width, S2S_gap_width, S2S_S_width, S2S_length, UTM2)
+    _ = c << s2s_1
+    _.movex(trans_length + pad_length)
+
+    # Phase shifter region
+    PS, x3 = GSG_piece_SilTerra(PS_G_width, PS_gap_width, PS_S_width, PS_length, UTM2)
+    _ = c << PS
+    _.movex(trans_length + pad_length + S2S_length)
+
+    # Transition 1 
+    taper1 = gf.components.taper_cross_section_linear(x1, x2, length=trans_length)
+    _ = c << taper1
+    _.movex(pad_length)
+    
+    # S2S 2
+    s2s_2, x4 = GSG_piece_SilTerra(S2S_G_width, S2S_gap_width, S2S_S_width, S2S_length, UTM2)
+    _ = c << s2s_2
+    _.movex(trans_length + pad_length + S2S_length + PS_length)
+
+    #Add ports
+    c.add_port(
+        name="e_low",
+        center=(pad_length + trans_length + S2S_length, 
+                -PS_G_width/2 - PS_gap_width/2),
+        width=1,
+        orientation=0, 
+        layer=MT2,
+        port_type="electrical",
+    )
+ 
+    c.add_port(
+        name="e_up",
+        center=(pad_length + trans_length + S2S_length, 
+                PS_G_width/2 + PS_gap_width/2),
+        width=1,
+        orientation=0, 
+        layer=MT2,
+        port_type="electrical",
+    )
+    
+    return c
+
 
 @gf.cell 
 def SGS_MT2_DC(PS_length, trans_length, taper_type, sig_trace, params : dict, config="standard",):
