@@ -1102,7 +1102,7 @@ def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
     s21 = sections_doping_extend.append(gf.Section(width=w_NCONT, offset=-(offset_NCONT), layer=NCONT, name="NCONT_2"))
 
     s_FETCH_CLD = sections_extended_full.append(gf.Section(width=w_FETCH_CLD, offset=0, layer=RIB_ETCH, name="FETCH_CLD"))
-    s_NFE_CLD = sections_extended_full.append(gf.Section(width=w_FETCH_CLD, offset=0, layer=NOP, name="NOP"))
+    #s_NFE_CLD = sections_extended_full.append(gf.Section(width=w_FETCH_CLD, offset=0, layer=NOP, name="NOP"))
 
     #s_SWG_dummy_block_PS = sections_extended.append(gf.Section(width=2*(w_slot + w_slotWG + w_slab + w_si_contact ), offset = 0, layer=SWG_DUMMY_BLOCK, name="SWG_DUMMY_BLOCK"))
 
