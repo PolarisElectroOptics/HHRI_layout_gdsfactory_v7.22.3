@@ -162,6 +162,7 @@ combined_params = {**differential_electrode_params, **SilTerra_sipho_params, "gs
                     "w_slab": 4,
                     "buffer_RIB_SLAB_overlay": 0,#0.25,
                     "w_si_contact": 9.5,
+                    "w_impl_window": 40,
                     "S2S_ADIA_W": 0.4,
                     "S2S_ADIA_W0": 0.18,
                     "S2S_ADIA_R": 0.2, #default to w_slotWG
@@ -205,8 +206,8 @@ combined_params = {**differential_electrode_params, **SilTerra_sipho_params, "gs
 combined_params["PS_length"] = 500
 
 #_ = c << MRM_SilTerra(combined_params)
-#_ = c << PS_slotWG_SilTerra(combined_params)
-_ = c << PS_connected_from_params(combined_params)
+_ = c << PS_slotWG_SilTerra(combined_params)
+#_ = c << PS_connected_from_params(combined_params)
 #_ = c << s2s_adiabatic(combined_params)
 
 

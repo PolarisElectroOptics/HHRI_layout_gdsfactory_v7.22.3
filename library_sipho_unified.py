@@ -1009,7 +1009,7 @@ def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
     w_si_contact = params["w_si_contact"]
     gap_si_contact = params["gap_si_contact"]
 
-    w_FETCH_CLD = params["w_FETCH_CLD"]
+    w_impl_window = params["w_impl_window"]
 
     w_NCONT = params["w_NCONT"]
     gap_NCONT_WG = params["gap_NCONT_WG"]
@@ -1105,8 +1105,8 @@ def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
     s20 = sections_doping_extend.append(gf.Section(width=w_NCONT, offset=(offset_NCONT), layer=NCONT, name="NCONT_1"))
     s21 = sections_doping_extend.append(gf.Section(width=w_NCONT, offset=-(offset_NCONT), layer=NCONT, name="NCONT_2"))
 
-    #s_FETCH_CLD = sections_extended_full.append(gf.Section(width=w_FETCH_CLD, offset=0, layer=RIB_ETCH, name="FETCH_CLD"))
-    #s_NFE_CLD = sections_extended_full.append(gf.Section(width=w_FETCH_CLD, offset=0, layer=NOP, name="NOP"))
+    s_FETCH_CLD = sections_extended_full.append(gf.Section(width=w_impl_window, offset=0, layer=Impl_Window, name="FETCH_CLD"))
+    #s_NFE_CLD = sections_extended_full.append(gf.Section(width=w_impl_window, offset=0, layer=NOP, name="NOP"))
 
     #s_SWG_dummy_block_PS = sections_extended.append(gf.Section(width=2*(w_slot + w_slotWG + w_slab + w_si_contact ), offset = 0, layer=SWG_DUMMY_BLOCK, name="SWG_DUMMY_BLOCK"))
 
@@ -1536,11 +1536,11 @@ def PS_connected_s2s_only(params: dict, extra_slab: bool = False, Oband_variant:
         len_MMI = params["s2s_len_MMI"]
         len_taper = params["s2s_len_taper"]
         len_in = params["s2s_len_in"]
-    w_FETCH_CLD = params["w_FETCH_CLD"]
+    w_impl_window = params["w_impl_window"]
 
     #add nitride removal, full etch
-    s_FETCH_CLD = sections_extended_full.append(gf.Section(width=w_FETCH_CLD, offset=0, layer=RIB_ETCH, name="FETCH_CLD"))
-    s_NFE_CLD = sections_extended_full.append(gf.Section(width=w_FETCH_CLD, offset=0, layer=NOP, name="NOP"))
+    s_FETCH_CLD = sections_extended_full.append(gf.Section(width=w_impl_window, offset=0, layer=RIB_ETCH, name="FETCH_CLD"))
+    s_NFE_CLD = sections_extended_full.append(gf.Section(width=w_impl_window, offset=0, layer=NOP, name="NOP"))
     x8 = gf.CrossSection(sections=sections_extended_full)
     p8 = gf.path.straight(length= 2*len_taper + 2*len_MMI + 2*len_in)
     PS_extended_full = gf.path.extrude(p8, x8)
@@ -3648,7 +3648,7 @@ c.show()
     """
     #imports for legacy sub-functions
     w_routing = params["w_routing"]
-    w_FETCH_CLD = params["w_FETCH_CLD"]
+    w_impl_window = params["w_impl_window"]
     
     trans_length = params["trans_length"]
     taper_type = params["taper_type"]

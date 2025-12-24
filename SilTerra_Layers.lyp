@@ -159,7 +159,7 @@
   <marked>false</marked>
   <xfill>false</xfill>
   <animation>0</animation>
-  <name/>
+  <name>Oxide_Open</name>
   <source>171/60@1</source>
  </properties>
  <properties>
@@ -200,6 +200,24 @@
  </properties>
  <properties>
   <expanded>false</expanded>
+  <frame-color>#80ff8d</frame-color>
+  <fill-color>#80ff8d</fill-color>
+  <frame-brightness>0</frame-brightness>
+  <fill-brightness>0</fill-brightness>
+  <dither-pattern>I5</dither-pattern>
+  <line-style/>
+  <valid>true</valid>
+  <visible>true</visible>
+  <transparent>false</transparent>
+  <width>1</width>
+  <marked>false</marked>
+  <xfill>false</xfill>
+  <animation>0</animation>
+  <name>Impl_Window</name>
+  <source>127/60@1</source>
+ </properties>
+ <properties>
+  <expanded>false</expanded>
   <frame-color>#80a8ff</frame-color>
   <fill-color>#80a8ff</fill-color>
   <frame-brightness>0</frame-brightness>
@@ -213,8 +231,26 @@
   <marked>false</marked>
   <xfill>false</xfill>
   <animation>0</animation>
-  <name/>
+  <name>N_Impl</name>
   <source>257/0@1</source>
+ </properties>
+ <properties>
+  <expanded>false</expanded>
+  <frame-color>#ff0080</frame-color>
+  <fill-color>#ff0080</fill-color>
+  <frame-brightness>0</frame-brightness>
+  <fill-brightness>0</fill-brightness>
+  <dither-pattern>I5</dither-pattern>
+  <line-style/>
+  <valid>true</valid>
+  <visible>true</visible>
+  <transparent>false</transparent>
+  <width>1</width>
+  <marked>false</marked>
+  <xfill>false</xfill>
+  <animation>0</animation>
+  <name>NP_Impl</name>
+  <source>259/0@1</source>
  </properties>
  <properties>
   <expanded>false</expanded>
@@ -231,8 +267,26 @@
   <marked>false</marked>
   <xfill>false</xfill>
   <animation>0</animation>
-  <name/>
+  <name>NPP_Impl</name>
   <source>261/0@1</source>
+ </properties>
+ <properties>
+  <expanded>false</expanded>
+  <frame-color>#afff80</frame-color>
+  <fill-color>#afff80</fill-color>
+  <frame-brightness>0</frame-brightness>
+  <fill-brightness>0</fill-brightness>
+  <dither-pattern>I9</dither-pattern>
+  <line-style/>
+  <valid>true</valid>
+  <visible>true</visible>
+  <transparent>false</transparent>
+  <width>1</width>
+  <marked>false</marked>
+  <xfill>false</xfill>
+  <animation>0</animation>
+  <name>Salicide</name>
+  <source>128/60@1</source>
  </properties>
  <properties>
   <expanded>false</expanded>
@@ -249,7 +303,7 @@
   <marked>false</marked>
   <xfill>false</xfill>
   <animation>0</animation>
-  <name/>
+  <name>Contact_Si</name>
   <source>268/0@1</source>
  </properties>
  <properties>
@@ -269,6 +323,24 @@
   <animation>0</animation>
   <name>WG_HM</name>
   <source>275/0@1</source>
+ </properties>
+ <properties>
+  <expanded>false</expanded>
+  <frame-color>#ffa080</frame-color>
+  <fill-color>#ffa080</fill-color>
+  <frame-brightness>0</frame-brightness>
+  <fill-brightness>0</fill-brightness>
+  <dither-pattern>I9</dither-pattern>
+  <line-style/>
+  <valid>true</valid>
+  <visible>true</visible>
+  <transparent>false</transparent>
+  <width>1</width>
+  <marked>false</marked>
+  <xfill>false</xfill>
+  <animation>0</animation>
+  <name>DM_Excl</name>
+  <source>23/0@1</source>
  </properties>
  <name/>
 </layer-properties>
