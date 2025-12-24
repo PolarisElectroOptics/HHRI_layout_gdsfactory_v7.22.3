@@ -134,6 +134,64 @@ ps_balun_sipho_params = { #default for SYSTEM DIE 1, leave as is
     "gap_via_top": 0.45,
 }
 
+ps_SilTerra_sipho_params = { 
+    "PS_length": 1500,
+    "trans_length": 250,
+    "trans_length_to_term": 250,
+
+    # slot WG parameters
+    "w_slot": 0.2,  # Different
+    "w_slotWG": 0.2,  # Different
+    "w_routing": 0.4,
+    "w_slab": 4,
+    "buffer_RIB_SLAB_overlay": 0.1,
+    "w_OXOP": 5,
+
+    "w_FETCH_CLD": 20,
+
+    # doping regions
+    "w_NIM": 6,
+    "len_NIM": 5,
+    "delta_to_len_taper_NIM": -0.5,
+    "w_IND": 12.5,
+    "gap_IND_WG": 1,
+    "w_NCONT": 11.5,
+    "gap_NCONT_WG": 2,
+    "sb_overplot": 0.5,
+
+    # conductive path structures
+
+    "w_si_contact": 13.5,  # 10.5,
+    "gap_si_contact": -2.25,
+   # "gap_silicide":,
+    "silicide_width": 3,
+    "gap_silicide": 0.55,
+    "electrical": True,
+    "num_rows_CONTACT": 3,
+    "via_size_contact": (0.35, 0.35),
+    "gap_via_contact": 0.45,
+
+    "extension_electrical": 3,
+
+    "w_MT1": 20,#13,
+    "min_gap_OXOP_MT": 5,
+    "num_rows_V1": 3,
+    "via_size_1": 0.35,#unused in 2 layer setup
+    "gap_via_1": 0.45,
+    "slot_size_MT1": (1.5, 1.5),
+    "slot_gap_MT1": 10,
+    
+
+    "w_MT2": 20,  # 10,
+    "min_inc_via_1": 0.1, #CHECK
+    "num_rows_V2": 2,
+    "min_exc_of_via_2": 0.2,#CHECK
+
+    "via_size_top": 0.35,
+    "gap_via_top": 0.45,
+}
+
+
 balun_sipho_params = {
     **MZM_config_default_sipho_params,
     "Oband_variant": True,
@@ -149,6 +207,20 @@ balun_sipho_params = {
     + ps_balun_sipho_params["PS_length"] + ps_balun_sipho_params["trans_length"] + ps_balun_sipho_params["trans_length_to_term"]
 }
 
+SilTerra_sipho_params = {
+    **MZM_config_default_sipho_params,
+    "Oband_variant": True,
+    **s2s_Oband_default_sipho_params,
+    **s2s_AIM_sipho_params,
+    **s2s_adiabatic_default_sipho_params,
+    **ps_SilTerra_sipho_params,
+
+    "s2s_sipho_length": s2s_Oband_default_sipho_params["s2s_O_len_in"] + s2s_Oband_default_sipho_params["s2s_O_len_MMI"] + s2s_Oband_default_sipho_params["s2s_O_MMI_METCH_buffer"]
+    + s2s_Oband_default_sipho_params["s2s_O_METCH_taper_buffer"] + s2s_Oband_default_sipho_params["s2s_O_len_taper"],
+    "ps_connected_total_length": 2*(s2s_Oband_default_sipho_params["s2s_O_len_in"] + s2s_Oband_default_sipho_params["s2s_O_len_MMI"] + s2s_Oband_default_sipho_params["s2s_O_MMI_METCH_buffer"]
+    + s2s_Oband_default_sipho_params["s2s_O_METCH_taper_buffer"] + s2s_Oband_default_sipho_params["s2s_O_len_taper"])
+    + ps_balun_sipho_params["PS_length"] + ps_balun_sipho_params["trans_length"] + ps_balun_sipho_params["trans_length_to_term"]
+}
 
 SYSTEM_1_params = {
     **balun_sipho_params

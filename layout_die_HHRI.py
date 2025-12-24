@@ -9,7 +9,7 @@ from library_electrode_params import *
 import pandas as pd
 
 combined_params = {**differential_electrode_params, **balun_sipho_params, "gsgsg_variant": "DC", "s2s_type": "adiabatic",  #MMI, adiabatic, power
-                    "PS_length": 1000,
+                    "PS_length": 50,
                     #"PS_sipho_length": 900,
                     "w_slot": 0.20,
                     "w_slotWG": 0.20,
