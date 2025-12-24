@@ -805,7 +805,7 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     y_D1 = np.concatenate((y_0 +y_S0 +W0, y_W1+ y_S1))
     x__ = [L1, L1+L2+L3]
     #y__ = [w_slab, w_slab]
-    y__ = [offset_si_contact+params["w_si_contact"]/2, offset_si_contact+params["w_si_contact"]/2]
+    y__ = [w_slab+w_slot/2+w_slotWG, w_slab+w_slot/2+w_slotWG]
     x_D1 = np.concatenate((x_D1, x__))
     y_D1 = np.concatenate((y_D1, y__))
     
@@ -835,7 +835,7 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
 
     #D6 (from bottom left of lower input slab to botom right of lower slab
     x_D6 = [L1, L1+L2+L3]
-    y_D6 = [-(offset_si_contact+params["w_si_contact"]/2), -(offset_si_contact+params["w_si_contact"]/2)]
+    y_D6 = [-(w_slab+w_slot/2+w_slotWG), -(w_slab+w_slot/2+w_slotWG)]
 
     #add P1
     x_p = np.concatenate((x_D1, np.flip(x_D2[2:])))
@@ -896,8 +896,8 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     c.add_polygon(P5)
 
 
-    coords = ([-L1-s2s_O_len_in, offset_si_contact+params["w_si_contact"]/2], [L1, offset_si_contact+params["w_si_contact"]/2],
-              [L1, -offset_si_contact-params["w_si_contact"]/2], [-L1-s2s_O_len_in, -offset_si_contact-params["w_si_contact"]/2])
+    coords = ([-L1-s2s_O_len_in, w_slab+w_slot/2+w_slotWG], [L1, w_slab+w_slot/2+w_slotWG],
+              [L1, -(w_slab+w_slot/2+w_slotWG)], [-L1-s2s_O_len_in, -(w_slab+w_slot/2+w_slotWG)])
     P6 = gf.Polygon(coords, layer=WG_Strip)
 
     c_P5 = gf.Component()
@@ -1064,31 +1064,35 @@ def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
     components_along_path = []
     components_along_path_electrical_extend = []
 
-    s0 = sections.append(gf.Section(width = w_slot, offset=0, layer=SLOT_ETCH))
+    #s0 = sections.append(gf.Section(width = w_slot, offset=0, layer=SLOT_ETCH))
 
     offset_slotWG = (w_slotWG + w_slot) / 2
 
-    s1 = sections.append(gf.Section(width = w_slot+2*w_slotWG, offset=0, layer=RIB))
-    # s1 = sections.append(gf.Section(width=w_slotWG, offset=offset_slotWG, layer=RIB, name="slotWG_1"))
-    # s2 = sections.append(gf.Section(width=w_slotWG, offset=-offset_slotWG, layer=RIB, name="slotWG_2"))
+    #s1 = sections.append(gf.Section(width = w_slot+2*w_slotWG, offset=0, layer=WG_HM))
+    s1 = sections.append(gf.Section(width=w_slotWG, offset=offset_slotWG, layer=WG_HM, name="slotWG_1"))
+    s2 = sections.append(gf.Section(width=w_slotWG, offset=-offset_slotWG, layer=WG_HM, name="slotWG_2"))
+
+    s2 = sections.append(gf.Section(width=w_slot + 2*w_slotWG+2*buffer_RIB_SLAB_overlay, offset=0, layer=WG_Strip, name="WG_Strip"))
 
     # s1 = sections.append(gf.Section(width=w_slotWG + offset_slotWG/2, offset=offset_slotWG*.75, layer=SLAB_COR, name="slotWG_1"))
     # s2 = sections.append(gf.Section(width=w_slotWG + offset_slotWG/2, offset=-offset_slotWG*.75, layer=SLAB_COR, name="slotWG_2"))
 
-    s1 = sections.append(gf.Section(width=2*w_slotWG+w_slot, offset=0, layer=SLAB_COR, name="slotWG_1"))
+    #s1 = sections.append(gf.Section(width=2*w_slotWG+w_slot, offset=0, layer=SLAB_COR, name="slotWG_1"))
 
     offset_slab = (w_slot + w_slab) / 2 + w_slotWG
-    # s3 = sections.append(gf.Section(width=(w_slab + buffer_RIB_SLAB_overlay * 2), offset=offset_slab, layer=SLAB, name="slab_1"))
-    # s4 = sections.append(gf.Section(width=(w_slab + buffer_RIB_SLAB_overlay * 2), offset=-offset_slab, layer=SLAB, name="slab_2"))
-    s4 = sections.append(gf.Section(width=(2*w_slab + w_slot+2*w_slotWG), offset=0, layer=SLAB, name="slab_2"))
+    # s3 = sections.append(gf.Section(width=(w_slab + buffer_RIB_SLAB_overlay * 2), offset=offset_slab, layer=WG_LowRib, name="slab_1"))
+    # s4 = sections.append(gf.Section(width=(w_slab + buffer_RIB_SLAB_overlay * 2), offset=-offset_slab, layer=WG_LowRib, name="slab_2"))
+    s3 = sections.append(gf.Section(width=(w_slab), offset=offset_slab, layer=WG_LowRib, name="slab_1"))
+    s4 = sections.append(gf.Section(width=(w_slab), offset=-offset_slab, layer=WG_LowRib, name="slab_2"))
+    #s4 = sections.append(gf.Section(width=(2*w_slab + w_slot+2*w_slotWG), offset=0, layer=WG_LowRib, name="slab_2"))
 
     # offset_si_contact = w_slot / 2 + w_slotWG + gap_si_contact + w_si_contact / 2
     # s5 = sections.append(gf.Section(width=w_si_contact, offset=offset_si_contact, layer=RIB, name="si_contact_1"))
     # s6 = sections.append(gf.Section(width=w_si_contact, offset=-offset_si_contact, layer=RIB, name="sl_contact_2"))
 
-    offset_si_contact = w_slot / 2 + w_slotWG + w_si_contact / 2
-    s5 = sections_extended.append(gf.Section(width=w_si_contact, offset=offset_si_contact, layer=RIB, name="si_contact_1"))
-    s6 = sections_extended.append(gf.Section(width=w_si_contact, offset=-offset_si_contact, layer=RIB, name="sl_contact_2"))
+    offset_si_contact = w_slot / 2 + w_slotWG + w_slab + w_si_contact / 2
+    s5 = sections_extended.append(gf.Section(width=w_si_contact, offset=offset_si_contact, layer=WG_HM, name="si_contact_1"))
+    s6 = sections_extended.append(gf.Section(width=w_si_contact, offset=-offset_si_contact, layer=WG_HM, name="sl_contact_2"))
 
     s24 = sections_doping_extend.append(gf.Section(width=w_NIM, offset=0, layer=NIM, name="NIM"))
 
@@ -1101,7 +1105,7 @@ def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
     s20 = sections_doping_extend.append(gf.Section(width=w_NCONT, offset=(offset_NCONT), layer=NCONT, name="NCONT_1"))
     s21 = sections_doping_extend.append(gf.Section(width=w_NCONT, offset=-(offset_NCONT), layer=NCONT, name="NCONT_2"))
 
-    s_FETCH_CLD = sections_extended_full.append(gf.Section(width=w_FETCH_CLD, offset=0, layer=RIB_ETCH, name="FETCH_CLD"))
+    #s_FETCH_CLD = sections_extended_full.append(gf.Section(width=w_FETCH_CLD, offset=0, layer=RIB_ETCH, name="FETCH_CLD"))
     #s_NFE_CLD = sections_extended_full.append(gf.Section(width=w_FETCH_CLD, offset=0, layer=NOP, name="NOP"))
 
     #s_SWG_dummy_block_PS = sections_extended.append(gf.Section(width=2*(w_slot + w_slotWG + w_slab + w_si_contact ), offset = 0, layer=SWG_DUMMY_BLOCK, name="SWG_DUMMY_BLOCK"))
@@ -1164,12 +1168,10 @@ def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
         s_silicide_contact_top = sections_short_sh.append(gf.Section(width=silicide_width, offset=(offset_silicide), layer=SB, name="SB_PS"))
         s_silicide_contact_bot = sections_short_sh.append(gf.Section(width=silicide_width, offset=-(offset_silicide), layer=SB, name="SB_PS"))
 
-        s_silicide_contact_top = sections_extended.append(gf.Section(width=silicide_width, offset=(offset_silicide), layer=SLAB_COR, name="SB_PS"))
-        s_silicide_contact_bot = sections_extended.append(gf.Section(width=silicide_width, offset=-(offset_silicide), layer=SLAB_COR, name="SB_PS"))
         s_silicide_contact_top = sections_extended.append(gf.Section(width=silicide_width, offset=(offset_silicide), layer=SLAB, name="SB_PS"))
         s_silicide_contact_bot = sections_extended.append(gf.Section(width=silicide_width, offset=-(offset_silicide), layer=SLAB, name="SB_PS"))
-        s_silicide_contact_top = sections_extended.append(gf.Section(width=silicide_width, offset=(offset_silicide), layer=RIB, name="SB_PS"))
-        s_silicide_contact_bot = sections_extended.append(gf.Section(width=silicide_width, offset=-(offset_silicide), layer=RIB, name="SB_PS"))
+        s_silicide_contact_top = sections_extended.append(gf.Section(width=silicide_width, offset=(offset_silicide), layer=WG_HM, name="SB_PS"))
+        s_silicide_contact_bot = sections_extended.append(gf.Section(width=silicide_width, offset=-(offset_silicide), layer=WG_HM, name="SB_PS"))
 
 
         s_LT = sections.append(gf.Section(width=w_OXOP, layer=OXOP, name="oxide open"))
