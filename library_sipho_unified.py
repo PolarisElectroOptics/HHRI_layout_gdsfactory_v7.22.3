@@ -3324,7 +3324,7 @@ def TC_DOE_new(combined_params:dict, TCdoe: str, row: int = 1):
 
         # add ports
         c.add_port(name="o1", center=(0, 0), width=0.5, orientation=0, layer=RIB, port_type="optical")
-        c.add_port(name="o2", center=(myPos + a.xsize - cascade_PS_length -2.1, 0), width=params["s2s_O_w_in"], orientation=0, layer=RIB, port_type="optical")
+        c.add_port(name="o2", center=(myPos + a.xsize - cascade_PS_length, 0), width=params["s2s_O_w_in"], orientation=0, layer=RIB, port_type="optical")
 
         if params["electrical"]:
             c.add_port(name="e1", center=(15, offset_MT1), width=0.5, orientation=0, layer=MT1,
@@ -3600,6 +3600,8 @@ def GCDOEcell(gcDOEfile, l):
     return c
 
 
+
+
 @gf.cell
 def MRM_SilTerra(params: dict) -> gf.Component:
     """
@@ -3661,21 +3663,14 @@ c.show()
     
     trans_length = params["trans_length"]
     taper_type = params["taper_type"]
-    sig_trace = params["sig_trace"]
-    termination = params["termination"]
-    extra_slab = params["extra_slab"]
-    config = params["config"]
-    gsgsg_variant = params["gsgsg_variant"]
+
     Oband_variant = params["Oband_variant"]
     s2s_type  = params["s2s_type"]
-    ps_config = params["ps_config"]
-    gnds_shorted = params["gnds_shorted"]
     
     coupling_length = 48
     coupling_gap = 0.25
     bus_length = coupling_length
     bus_extend = 50
-
     bend_r = 15
     
     c = gf.Component()
@@ -3694,7 +3689,6 @@ c.show()
     ref_bus_ext2 = c << gf.components.straight(length=bus_length, cross_section = rib_Oband)
     ref_bus_ext2.connect('o2', ref_bus.ports["o1"])   
 
-    
     # Create two PS_connected
     PS1 = PS_connected_from_params(params)
     ref_PS_1 = c << PS1
@@ -3717,21 +3711,12 @@ c.show()
     )
     for route in routes:
         c.add(route.references)
-
-    c = merge_clad(c, 0)
-
-    # # Choose GSGSG implementation
-    # PS_length = params["PS_length"]
-    # if gsgsg_variant == "DC":
-    #     # DOE8 specific DC variant
-    #     GSGSG = SGS_MT2_DC(PS_length, trans_length, taper_type, sig_trace, config=config, params=params)
-    # # elif gsgsg_variant == "bond":
-    # #     GSGSG = GSGSG_MT2_symmetric(PS_length, trans_length, taper_type, sig_trace, electrode_params, termination=termination, ps_config=ps_config, gnds_shorted=True)
-    # else:
-    #     # Standard GSGSG variant
-    #     GSGSG = GSGSG_MT2(PS_length, trans_length, taper_type, sig_trace, params=params, termination=termination, gnds_shorted = gnds_shorted, ps_config = ps_config)
-
-    # ref_SGS = c << GSGSG
+        
+    c.add_port(name="e1", center=(coupling_length/2, coupling_gap+bend_r+w_routing), width=1, orientation=270, layer=UTM2, port_type="electrical")
+  
+    ref_UTM2 = c << GSG_MRM_SilTerra(params)
+    ref_UTM2.connect('e_MRM', c.ports["e1"])
+    
 
     # # Connect electrical ports
     # ref_PS_1.connect("e_MT2", ref_SGS.ports["e_up"])
@@ -3741,6 +3726,8 @@ c.show()
     c.add_port("o1", port=ref_bus_ext2["o1"])
     c.add_port("o2", port=ref_bus_ext1["o2"])
 
+
+    c = merge_clad(c, 0)
 
     return c
 
