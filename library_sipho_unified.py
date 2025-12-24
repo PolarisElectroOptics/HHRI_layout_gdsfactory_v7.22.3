@@ -1072,7 +1072,7 @@ def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
     s1 = sections.append(gf.Section(width=w_slotWG, offset=offset_slotWG, layer=WG_HM, name="slotWG_1"))
     s2 = sections.append(gf.Section(width=w_slotWG, offset=-offset_slotWG, layer=WG_HM, name="slotWG_2"))
 
-    s2 = sections.append(gf.Section(width=w_slot + 2*w_slotWG+2*buffer_RIB_SLAB_overlay, offset=0, layer=WG_Strip, name="WG_Strip"))
+    s2 = sections.append(gf.Section(width=w_slot + 2*buffer_RIB_SLAB_overlay, offset=0, layer=WG_Strip, name="WG_Strip"))
 
     # s1 = sections.append(gf.Section(width=w_slotWG + offset_slotWG/2, offset=offset_slotWG*.75, layer=SLAB_COR, name="slotWG_1"))
     # s2 = sections.append(gf.Section(width=w_slotWG + offset_slotWG/2, offset=-offset_slotWG*.75, layer=SLAB_COR, name="slotWG_2"))
@@ -1082,9 +1082,9 @@ def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
     offset_slab = (w_slot + w_slab) / 2 + w_slotWG
     # s3 = sections.append(gf.Section(width=(w_slab + buffer_RIB_SLAB_overlay * 2), offset=offset_slab, layer=WG_LowRib, name="slab_1"))
     # s4 = sections.append(gf.Section(width=(w_slab + buffer_RIB_SLAB_overlay * 2), offset=-offset_slab, layer=WG_LowRib, name="slab_2"))
-    s3 = sections.append(gf.Section(width=(w_slab), offset=offset_slab, layer=WG_LowRib, name="slab_1"))
-    s4 = sections.append(gf.Section(width=(w_slab), offset=-offset_slab, layer=WG_LowRib, name="slab_2"))
-    #s4 = sections.append(gf.Section(width=(2*w_slab + w_slot+2*w_slotWG), offset=0, layer=WG_LowRib, name="slab_2"))
+    #s3 = sections.append(gf.Section(width=(w_slab), offset=offset_slab, layer=WG_LowRib, name="slab_1"))
+    #s4 = sections.append(gf.Section(width=(w_slab), offset=-offset_slab, layer=WG_LowRib, name="slab_2"))
+    s4 = sections.append(gf.Section(width=(2*w_slab + w_slot+2*w_slotWG), offset=0, layer=WG_LowRib, name="slab_2"))
 
     # offset_si_contact = w_slot / 2 + w_slotWG + gap_si_contact + w_si_contact / 2
     # s5 = sections.append(gf.Section(width=w_si_contact, offset=offset_si_contact, layer=RIB, name="si_contact_1"))
