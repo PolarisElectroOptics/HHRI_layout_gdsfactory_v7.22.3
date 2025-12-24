@@ -42,7 +42,7 @@ MZM_config_default_sipho_params = { # type override parameters needed for MZM_GS
 
 s2s_Oband_default_sipho_params = {#default for SYSTEM DIE 1, leave as is
     # s2s parameters - O-band specific
-    "s2s_O_len_in": 2.1,  # Different
+    "s2s_O_len_in": 0,  # Different
     "s2s_O_w_in": 0.38,  # Different
     "s2s_O_len_MMI": 0.96,# Different
     "s2s_O_w_MMI": 0.96, # Different
