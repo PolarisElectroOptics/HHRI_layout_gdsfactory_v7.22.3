@@ -845,7 +845,9 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     x_p = np.concatenate((x_p, np.flip(x0)))
     y_p = np.concatenate((y_p, np.flip(y_0+y_S0)))
     P1 = gf.Polygon(list(zip(x_p, y_p)), layer=WG_LowRib)
-    c.add_polygon(P1)
+    c_LowRib_top = gf.Component("LowRib_top")
+    c_LowRib_top.add_polygon(P1)
+    c << c_LowRib_top
 
     # #add P2 - central FETCH_COR
     # x_p = np.concatenate((x_D2, np.flip(x_D5)))
@@ -908,20 +910,19 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     c_P5.add_polygon(P5)
     c_P6 = gf.Component()
     c_P6.add_polygon(P6)
-    c_sub_result = gf.geometry.boolean(A=c_P6, B=c, operation="not", layer=WG_Strip)
+    c_sub_result = gf.geometry.boolean(A=c_P6, B=c_LowRib_top, operation="not", layer=WG_Strip)
     c << c_sub_result
 
     coords = ([-L1 - s2s_O_len_in, w_slab + w_slot / 2 + w_slotWG], [L1+L2+L3, w_slab + w_slot / 2 + w_slotWG],  # left half of WG_Strip block
               [L1+L2+L3, -(w_slab + w_slot / 2 + w_slotWG)], [-L1 - s2s_O_len_in, -(w_slab + w_slot / 2 + w_slotWG)])
     c.add_polygon(coords, layer=WG_LowRib)
 
-    x_lower = np.concatenate((x0, x1))
-    y_lower = np.concatenate((y_S0_lower, y_S1_lower))
-
-    x_y_lower = list(zip(np.flip(x_lower), np.flip(y_lower))) #using acutal points does not fix problem of small gap for some reason
-    coords = ([-L1 - s2s_O_len_in, W/2], [0,L1_slope * (L1) + W/2],[L1,-T/4], [L1, -T/2],
-              [0,-(L1_slope * (L1) + W/2+0.001)],[-L1 - s2s_O_len_in, -W/2-0.001])  # fill in -L1 input portion of WG with WG_Strip, taper to slot
-    c.add_polygon(coords, layer=WG_Strip) #0.002 is fudge factor, seems to be precision errors from using 2 points instead of full line with 50
+    # x_lower = np.concatenate((x0, x1))
+    # y_lower = np.concatenate((y_S0_lower, y_S1_lower))
+    # x_y_lower = list(zip(np.flip(x_lower), np.flip(y_lower))) #using acutal points does not fix problem of small gap for some reason
+    # coords = ([-L1 - s2s_O_len_in, W/2], [0,L1_slope * (L1) + W/2],[L1,-T/4], [L1, -T/2],
+    #           [0,-(L1_slope * (L1) + W/2+0.001)],[-L1 - s2s_O_len_in, -W/2-0.001])  # fill in -L1 input portion of WG with WG_Strip, taper to slot
+    # c.add_polygon(coords, layer=WG_Strip) #0.002 is fudge factor, seems to be precision errors from using 2 points instead of full line with 50
     
 
     # plt.plot(x_D5, y_D5)
