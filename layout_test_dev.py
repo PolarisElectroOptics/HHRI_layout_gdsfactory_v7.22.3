@@ -152,16 +152,16 @@ from shapely.geometry.polygon import Polygon
 # )
 # c.show()
 # #
-<<<<<<< Updated upstream
+
 c = gf.Component("MZM_DC_SilTerra")
 combined_params = {**differential_electrode_params, **balun_sipho_params, "gsgsg_variant": "DC", "s2s_type": "adiabatic",  #MMI, adiabatic, power
-                    "PS_length": 1000,
+                    "PS_length": 50,
                     #"PS_sipho_length": 900,
-=======
+}
 c = gf.Component("Test_SilTerra")
 combined_params = {**differential_electrode_params, **SilTerra_sipho_params, "gsgsg_variant": "DC", "MT1_from_PS": False, "PS_trans_length": 250, "PS_taper": True, "DC_MT1": False, "s2s_type": "adiabatic",  #MMI, adiabatic, power
 
->>>>>>> Stashed changes
+
                     "w_slot": 0.20,
                     "w_slotWG": 0.20,
                     "S2S_ADIA_W": 0.4,
@@ -197,26 +197,21 @@ combined_params = {**differential_electrode_params, **SilTerra_sipho_params, "gs
                     "PS_sig_width": 40,
                     "PS_outer_gap_width": 15, #used for GSGSG only
                     "PS_outer_gnd_width": 50,#-40, #used for GSGSG only
-<<<<<<< Updated upstream
+
                     "trans_length": 250,
-=======
 
                     "PS_trans_length": 0,
->>>>>>> Stashed changes
 
                     "pad_t_length": 60,
             }
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-_ = c << MZM_SilTerra(combined_params)
-=======
 combined_params["PS_length"] = 50
+
+# _ = c << MZM_SilTerra(combined_params)
+
 _ = c << MRM_SilTerra(combined_params)
->>>>>>> Stashed changes
-=======
-#_ = c << MZM_SilTerra(combined_params)
-_ = c << s2s_adiabatic(combined_params)
->>>>>>> f6d59fb39a039d5cddd19a3586e0db02ffae5e76
+
+# _ = c << s2s_adiabatic(combined_params)
+
 
 c.show()
 

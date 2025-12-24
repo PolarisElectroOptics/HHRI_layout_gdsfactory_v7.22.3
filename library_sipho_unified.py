@@ -3691,7 +3691,6 @@ c.show()
     routes = gf.routing.get_bundle(
         ref_bend_2.ports["o2"],
         ref_bend_3.ports["o1"],
-        # layer=RIB,
         cross_section=rib_Oband
     )
     for route in routes:
