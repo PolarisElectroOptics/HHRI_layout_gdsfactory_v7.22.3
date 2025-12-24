@@ -842,17 +842,17 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     y_p = np.concatenate((y_D1, np.flip(y_D2[2:])))
     x_p = np.concatenate((x_p, np.flip(x0)))
     y_p = np.concatenate((y_p, np.flip(y_0+y_S0)))
-    P1 = gf.Polygon(list(zip(x_p, y_p)), layer=RIB)
+    P1 = gf.Polygon(list(zip(x_p, y_p)), layer=WG_LowRib)
     c.add_polygon(P1)
 
-    #add P2 - central FETCH_COR
-    x_p = np.concatenate((x_D2, np.flip(x_D5)))
-    y_p = np.concatenate((y_D2, np.flip(y_D5)))
-    x_p = np.concatenate((x_p, [L1, -L1, -s2s_O_len_in-L1])) #round out the bottom left
-    y_p = np.concatenate((y_p, [-T/2, -W/2, -W/2]))
-    P2 = gf.Polygon(list(zip(x_p, y_p)), layer=RIB)
-    c.add_polygon(P2)
-    # c.add_polygon([x_p, y_p], layer=RIB)
+    # #add P2 - central FETCH_COR
+    # x_p = np.concatenate((x_D2, np.flip(x_D5)))
+    # y_p = np.concatenate((y_D2, np.flip(y_D5)))
+    # x_p = np.concatenate((x_p, [L1, -L1, -s2s_O_len_in-L1])) #round out the bottom left
+    # y_p = np.concatenate((y_p, [-T/2, -W/2, -W/2]))
+    # P2 = gf.Polygon(list(zip(x_p, y_p)), layer=RIB)
+    # c.add_polygon(P2)
+    # # c.add_polygon([x_p, y_p], layer=RIB)
 
     #add P2_2 - central METCH_COR
     x_D2_truncate = x_D2[1:]
@@ -863,8 +863,8 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     y_p = np.concatenate((y_D2_truncate, np.flip(y_D5)))
     x_p = np.concatenate((x_p, [L1, -L1]))
     y_p = np.concatenate((y_p, [-T/2, -W/2]))
-    P2 = gf.Polygon(list(zip(x_p, y_p)), layer=SLAB_COR)
-    c.add_polygon(P2)
+    P2 = gf.Polygon(list(zip(x_p, y_p)), layer=WG_HM)
+    #c.add_polygon(P2) #save for slot removal
 
     #add P3 - slot etch
     x_D3_truncate = np.concatenate((x1, x_D3[2:]))
@@ -873,8 +873,15 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     y_p = np.concatenate((y_D3_truncate, np.flip(y_D4)))
     x_p = np.concatenate((x_p, np.flip(x1)))
     y_p = np.concatenate((y_p, np.flip(y_S1_lower-(G+R-C2) - y_1)))
-    P3 = gf.Polygon(list(zip(x_p, y_p)), layer=SLOT_ETCH)
-    c.add_polygon(P3)
+    P3 = gf.Polygon(list(zip(x_p, y_p)), layer=WG_HM)
+    c.add_polygon(P3, layer=WG_Strip)
+
+    c_P2 = gf.Component()
+    c_P2.add_polygon(P2)
+    c_P3 = gf.Component()
+    c_P3.add_polygon(P3)
+    c_sub_result = gf.geometry.boolean(A=c_P2, B=c_P3, operation="not", layer=WG_HM)
+    c << c_sub_result
 
     # #add P4
     # x_p = np.concatenate((x_D4, np.flip(x_D5)))
@@ -885,7 +892,7 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     #add P5
     x_p = np.concatenate((x_D5, np.flip(x_D6)))
     y_p = np.concatenate((y_D5, np.flip(y_D6)))
-    P5 = gf.Polygon(list(zip(x_p, y_p)), layer=RIB)
+    P5 = gf.Polygon(list(zip(x_p, y_p)), layer=WG_LowRib)
     c.add_polygon(P5)
 
     # plt.plot(x_D5, y_D5)
@@ -914,12 +921,12 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
 
     sections = []
     components_along_path = []
-
-    sections.append(gf.Section(width=2*w_slab + w_slot+2*w_slotWG, offset=0, layer=SLAB, name="s2s_SLAB"))
-    x1 = gf.CrossSection(sections=sections)
-    p1 = gf.path.straight(length=L1+L1+L2+L3)
-    _ = c << gf.path.extrude(p1, x1)
-    _.movex(-L1)
+    #
+    # sections.append(gf.Section(width=2*w_slab + w_slot+2*w_slotWG, offset=0, layer=SLAB, name="s2s_SLAB"))
+    # x1 = gf.CrossSection(sections=sections)
+    # p1 = gf.path.straight(length=L1+L1+L2+L3)
+    # _ = c << gf.path.extrude(p1, x1)
+    # _.movex(-L1)
 
 
 
