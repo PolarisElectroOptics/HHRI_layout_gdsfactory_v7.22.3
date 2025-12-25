@@ -3613,15 +3613,7 @@ def MRM_SilTerra(params: dict) -> gf.Component:
     new version so that parameters can easily be read from CSV and placed in batches
     :param params:
     :param trans_length:
-    :param s2s_type: can be "FNG" (default), "oxide", "extra_slab"
-    :param extra_slab:
-    :param Oband_variant:
-
-    The below are overrides and specifications for GSGSG_MT2
-    :param electrode_params
-
-    :param taper_type: s2s overrides, 1 or 2
-    :param sig_trace: ps overrides, "narrow" "medium" "wide"
+    :param s2s_type: can be "MMI", "power", "adiabatic"
     :param ps_config: ps parameter overrides: "default"(default), "narrow_custom" "medium_custom" "wide_custom":
     :param termination:
     if termination = 0, the terminating electrode pads will match the default pads for a symmetric electrode structure
@@ -3665,11 +3657,6 @@ c.show()
     #imports for legacy sub-functions
     w_routing = params["w_routing"]
     w_impl_window = params["w_impl_window"]
-    
-    trans_length = params["trans_length"]
-    taper_type = params["taper_type"]
-
-    Oband_variant = params["Oband_variant"]
     s2s_type  = params["s2s_type"]
     
     coupling_length = 48
