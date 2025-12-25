@@ -333,7 +333,7 @@ def GSG_MRM_SilTerra(params : dict):
     S2S_S_width = PS_S_width
     S2S_length = params["S2S_length"]
 
-    trans_length = params["trans_length"]
+    trans_length = float(params["trans_length"])
     PS_length = params["PS_length"]
     sc_length = params["sc_length"]
 

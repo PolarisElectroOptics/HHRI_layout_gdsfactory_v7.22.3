@@ -1,0 +1,17 @@
+DUT,w_slot,w_slotWG,SlabT,pad_length,trans_length,S2S_length,PS_length,,Z0,termination,w_OXOP,Slot WG dop,slabDOP,ContDop,s2s_type,X,Y
+1,0.2,0.2,0.05,100,150,50,50,,70,0,5,NLD,Rail_1.0_NW,Rail_2.0_NP,adiabatic,100,3800
+2,0.2,0.2,0.05,100,150,50,50,,70,0,5,NLD,Rail_1.0_NW,Rail_2.0_NP,adiabatic,400,3800
+3,0.2,0.2,0.05,100,150,50,50,,70,0,5,NLD,Rail_1.0_NW,Rail_2.0_NP,adiabatic,700,3800
+4,0.2,0.2,0.05,100,150,50,50,,70,0,5,NLD,Rail_1.0_NW,Rail_2.0_NP,adiabatic,1000,3800
+5,0.2,0.2,0.05,100,150,50,50,,70,0,5,NLD,Rail_1.0_NW,Rail_2.0_NP,adiabatic,1300,3800
+6,0.2,0.2,0.05,100,150,50,50,,70,0,5,NLD,Rail_1.0_NW,Rail_2.0_NP,adiabatic,1600,3800
+7,0.2,0.2,0.05,100,150,50,50,,70,0,5,NLD,Rail_1.0_NW,Rail_2.0_NP,adiabatic,1900,3800
+8,0.2,0.2,0.05,100,150,50,50,,70,0,5,NLD,Rail_1.0_NW,Rail_2.0_NP,adiabatic,2200,3800
+9,0.2,0.2,0.05,100,150,50,50,,70,0,5,NLD,Rail_1.0_NW,Rail_2.0_NP,adiabatic,2500,3800
+10,0.2,0.2,0.05,100,150,50,50,,70,0,5,NLD,Rail_1.0_NW,Rail_2.0_NP,adiabatic,2800,3800
+11,0.2,0.2,0.05,100,150,50,50,,70,0,5,NLD,Rail_1.0_NW,Rail_2.0_NP,adiabatic,3100,3800
+12,0.2,0.2,0.05,100,150,50,50,,70,0,5,NLD,Rail_1.0_NW,Rail_2.0_NP,adiabatic,3400,3800
+13,0.2,0.2,0.05,100,150,50,50,,70,0,5,NLD,Rail_1.0_NW,Rail_2.0_NP,adiabatic,3700,3800
+14,0.2,0.2,0.05,100,150,50,50,,70,0,5,NLD,Rail_1.0_NW,Rail_2.0_NP,adiabatic,4000,3800
+15,0.2,0.2,0.05,100,150,50,50,,70,0,5,NLD,Rail_1.0_NW,Rail_2.0_NP,adiabatic,4300,3800
+16,0.2,0.2,0.05,100,150,50,50,,70,0,5,NLD,Rail_1.0_NW,Rail_2.0_NP,adiabatic,4600,3800
