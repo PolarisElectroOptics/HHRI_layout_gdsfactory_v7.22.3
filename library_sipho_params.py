@@ -160,24 +160,25 @@ ps_SilTerra_sipho_params = {
     "sb_overplot": 0.5,
 
     # conductive path structures
-
+    "electrical": True,
+    "MT1_from_PS": True,
     "w_si_contact": 9.5,  # 10.5,
     "gap_si_contact": -2.25,
    # "gap_silicide":,
     "silicide_width": 3.5,
     "gap_silicide": 0.55,
-    "electrical": True,
+
     "num_rows_CONTACT": 2,
     "via_size_contact": (0.8, 0.8),
     "gap_via_contact": 0.6,
 
     "extension_electrical": 3,
 
-    "w_MT1": 20,#13,
+    "w_MT1": 6.3,
     "min_gap_OXOP_MT": 5,
     "num_rows_V1": 3,
     "via_size_1": 0.8,#unused in 2 layer setup
-    "gap_via_1": 0.6,
+    "gap_via_1": 5-0.35,
     "slot_size_MT1": (1.5, 1.5),
     "slot_gap_MT1": 10,
     

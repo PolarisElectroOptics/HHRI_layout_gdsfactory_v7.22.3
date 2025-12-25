@@ -1140,34 +1140,29 @@ def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
         #via locations are set automatically from metal widths and other slot wg spacings
         offset_MT1 = w_OXOP / 2 + min_gap_OXOP_MT + w_MT1 / 2  # offset_si_contact + w_MT1/2 - (num_rows_CONTACT-1)*(gap_via_contact)
         if params["MT1_from_PS"]: #if regular GSGSG, add M1 lines
-            sections_electrical_extend.append(gf.Section(width=w_MT1, offset=offset_MT1, layer=MT1, name="MT1_1"))
-            sections_electrical_extend.append(gf.Section(width=w_MT1, offset=-offset_MT1, layer=MT1, name="MT1_1"))
+            sections_short_sh.append(gf.Section(width=w_MT1, offset=offset_MT1, layer=MT1, name="MT1_1"))
+            sections_short_sh.append(gf.Section(width=w_MT1, offset=-offset_MT1, layer=MT1, name="MT1_1"))
 
-        # if w_MT2 == -1:
-        offset_MT2 = w_OXOP / 2 + min_gap_OXOP_MT + w_MT2 / 2  #= params["PS_inner_gap_width"]/1.94 + 0.5*params["PS_center_gnd_width"] - w_MT2/2
+            offset_via_1 = w_OXOP/2 + gap_via_1 + (num_rows_V1) * (via_size_top + gap_via_top)/2
+            for i in range(num_rows_V1):
+                if position == "right":
+                    components_along_path.append(
+                        ComponentAlongPath(component=gf.c.via(size=(via_size_top, via_size_top), layer=VIA1), spacing=via_size_top + gap_via_top, padding=via_size_top + gap_via_top, enclosure=min_inc_via_1,
+                                           offset=(offset_via_1 + i * (via_size_top + gap_via_top))))
+                elif position == "left":
+                    components_along_path.append(
+                        ComponentAlongPath(component=gf.c.via(size=(via_size_top, via_size_top), layer=VIA1), spacing=via_size_top + gap_via_top, padding=via_size_top + gap_via_top, enclosure=min_inc_via_1,
+                                           offset=-(offset_via_1 + i * (via_size_top + gap_via_top))))
+                else:
+                    components_along_path.append(
+                        ComponentAlongPath(component=gf.c.via(size=(via_size_top, via_size_top), layer=VIA1), spacing=via_size_top + gap_via_top, padding=via_size_top + gap_via_top, enclosure=min_inc_via_1,
+                                           offset=(offset_via_1 + i * (via_size_top + gap_via_top))))
+                    components_along_path.append(
+                        ComponentAlongPath(component=gf.c.via(size=(via_size_top, via_size_top), layer=VIA1), spacing=via_size_top + gap_via_top, padding=via_size_top + gap_via_top, enclosure=min_inc_via_1,
+                                           offset=-(offset_via_1 + i * (via_size_top + gap_via_top))))
 
-        # # MT1 and V1AM from MT1 to MT2
 
-        s7 = sections_electrical_extend.append(gf.Section(width=0, layer=MT1, name="MT1_1")) #CrossSection requires a dummy section for whatever reason
-
-        offset_via_1 = offset_si_contact + w_si_contact/2 - (num_rows_V1)*(via_size_top+gap_via_top) + gap_via_1
-        for i in range(num_rows_V1):
-            if position=="right":
-                components_along_path_electrical_extend.append(ComponentAlongPath(component=gf.c.via(size=(via_size_top, via_size_top), layer=VIA1), spacing=via_size_top + gap_via_top, padding=via_size_top+gap_via_top, enclosure=min_inc_via_1,
-                                                                offset=(offset_via_1 + i * (via_size_top + gap_via_top))))
-            elif position=="left":
-                components_along_path_electrical_extend.append(ComponentAlongPath(component=gf.c.via(size=(via_size_top, via_size_top), layer=VIA1), spacing=via_size_top + gap_via_top, padding=via_size_top+gap_via_top, enclosure=min_inc_via_1,
-                                                                offset=-(offset_via_1 + i * (via_size_top + gap_via_top))))
-            else:
-                pass
-                # components_along_path_electrical_extend.append(
-                #     ComponentAlongPath(component=gf.c.via(size=(via_size_top, via_size_top), layer=VIA1), spacing=via_size_top + gap_via_top, padding=via_size_top + gap_via_top, enclosure=min_inc_via_1,
-                #                        offset=(offset_via_1 + i * (via_size_top + gap_via_top))))
-                # components_along_path_electrical_extend.append(
-                #     ComponentAlongPath(component=gf.c.via(size=(via_size_top, via_size_top), layer=VIA1), spacing=via_size_top + gap_via_top, padding=via_size_top + gap_via_top, enclosure=min_inc_via_1,
-                #                        offset=-(offset_via_1 + i * (via_size_top + gap_via_top))))
-
-        # vias from doped rib slab to MT1
+        # contacts from doped rib slab to MT1
         offset_via_contact = offset_si_contact + w_si_contact/2 - (num_rows_CONTACT-1)*(gap_via_contact+via_size_contact[0]) +gap_si_contact #align with slot WG slab
         for i in range(num_rows_CONTACT):
             if position=="right":
@@ -1210,11 +1205,11 @@ def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
     p1 = gf.path.straight(length=PS_length)
     PS = gf.path.extrude(p1, x1)
 
-    #electrical=False
-    if electrical:
-        x1_2 = gf.CrossSection(sections=sections_electrical_extend, components_along_path=components_along_path_electrical_extend)
-        p1_2 = gf.path.straight(length=PS_length)# + 2*params["extension_electrical"])
-        PS_e = gf.path.extrude(p1_2, x1_2)
+    # #electrical=False
+    # if electrical:
+    #     x1_2 = gf.CrossSection(sections=sections_electrical_extend, components_along_path=components_along_path_electrical_extend)
+    #     p1_2 = gf.path.straight(length=PS_length)# + 2*params["extension_electrical"])
+    #     PS_e = gf.path.extrude(p1_2, x1_2)
 
     x1_1 = gf.CrossSection(sections=sections_doping_extend)
     p1_1 = gf.path.straight(length=PS_length+0.4)
@@ -1275,9 +1270,9 @@ def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
     PS_extended_full = gf.path.extrude(p8, x8)
 
     _ = c << PS
-    if electrical:
-        _ = c << PS_e
-        #_.movex(-params["extension_electrical"])
+    # if electrical:
+    #     _ = c << PS_e
+    #     #_.movex(-params["extension_electrical"])
     _ = c << PS_dop
     _.movex(-0.2)
     _ = c << PS_short

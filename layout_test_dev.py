@@ -154,7 +154,7 @@ from shapely.geometry.polygon import Polygon
 # #
 
 c = gf.Component("Test_SilTerra")
-combined_params = {**differential_electrode_params, **SilTerra_sipho_params, "gsgsg_variant": "DC", "MT1_from_PS": False, "PS_trans_length": 250, "PS_taper": True, "DC_MT1": False, "s2s_type": "adiabatic",  #MMI, adiabatic, power
+combined_params = {**differential_electrode_params, **SilTerra_sipho_params, "gsgsg_variant": "DC", "s2s_type": "adiabatic",  #MMI, adiabatic, power
 
                     "w_slot": 0.20,
                     "w_slotWG": 0.20,
