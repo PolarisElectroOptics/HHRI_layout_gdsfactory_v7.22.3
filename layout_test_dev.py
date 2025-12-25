@@ -7,7 +7,6 @@ import gdsfactory as gf
 #from PDK_AMF import *
 #from library_EC import *
 
-
 from library_sipho_unified import *
 from library_sipho_params import *
 from library_electrode_unified import *
@@ -15,18 +14,95 @@ from library_electrode_params import *
 
 import shapely
 from shapely.geometry.polygon import Polygon
-#
-# from layout_die_DOE1 import DOE1
-# from layout_die_DOE2 import DOE2
-# from layout_die_DOE3 import DOE3
-# from layout_die_DOE4 import DOE4
-# from layout_die_DOE5 import DOE5
-# from layout_die_DOE6 import DOE6
-# from layout_die_DOE7 import DOE7
-# from layout_die_DOE8 import DOE8
-# from layout_die_relia import relia
-# from layout_die_wscl1 import wscl1
-# from layout_die_wscl2 import wscl2
+
+
+c = gf.Component("Test_SilTerra")
+combined_params = {**differential_electrode_params, **SilTerra_sipho_params, "gsgsg_variant": "DC", "s2s_type": "adiabatic",  #MMI, adiabatic, power
+
+                    "w_slot": 0.20,
+                    "w_slotWG": 0.20,
+                    "S2S_ADIA_W": 0.4,
+                    "S2S_ADIA_W0": 0.18,
+                    "S2S_ADIA_R": 0.2, #default to w_slotWG
+                    "S2S_ADIA_S": 0.17, #default to w_slot
+                    "S2S_ADIA_G": 0.17,
+                    "S2S_ADIA_L1": 4,
+                    "S2S_ADIA_L2": 4,
+                    "S2S_ADIA_L3": 42,
+                    "S2S_ADIA_B1": 2.25,
+                    "S2S_ADIA_B2": 0.87,
+                    "S2S_ADIA_B3": 5,
+                    "S2S_ADIA_C1": 0.525,
+                    "S2S_ADIA_C2": 0.13,
+
+                    "pad_center_gnd_width": 80,
+                    "pad_inner_gap_width": 20,
+                    "pad_sig_width": 80,
+
+                    "pad_length": 100,
+                    "trans_length": 150,                
+                    "S2S_length": 50,
+                    "PS_length": 50,                   
+
+                    "PS_center_gnd_width": 63,  #coupling_length +(bend_r-7.5)*2
+                    "PS_inner_gap_width": 15,
+                    "PS_sig_width": 40,
+            }
+
+_ = c << MRM_SilTerra(combined_params)
+_.movex(500).movey(250)
+
+combined_params = {**differential_electrode_params, **SilTerra_sipho_params, "gsgsg_variant": "DC", "s2s_type": "adiabatic",  #MMI, adiabatic, power
+
+                    "w_slot": 0.20,
+                    "w_slotWG": 0.20,
+                    "S2S_ADIA_W": 0.4,
+                    "S2S_ADIA_W0": 0.18,
+                    "S2S_ADIA_R": 0.2, #default to w_slotWG
+                    "S2S_ADIA_S": 0.17, #default to w_slot
+                    "S2S_ADIA_G": 0.17,
+                    "S2S_ADIA_L1": 4,
+                    "S2S_ADIA_L2": 4,
+                    "S2S_ADIA_L3": 42,
+                    "S2S_ADIA_B1": 2.25,
+                    "S2S_ADIA_B2": 0.87,
+                    "S2S_ADIA_B3": 5,
+                    "S2S_ADIA_C1": 0.525,
+                    "S2S_ADIA_C2": 0.13,
+
+                    "pad_center_gnd_width": 80,
+                    "pad_inner_gap_width": 20,
+                    "pad_sig_width": 80,
+
+                    "pad_length": 100,
+                    "trans_length": 150,                
+                    "S2S_length": 50,
+                    "PS_length": 1000,                   
+
+                    "PS_center_gnd_width": 63,  
+                    "PS_inner_gap_width": 15,
+                    "PS_sig_width": 40,
+                    
+                    "S2S_center_gnd_width": 63,  
+                    "S2S_inner_gap_width": 15,
+                    "S2s_sig_width": 40,                  
+                    
+                    
+            }
+
+_ = c << MZM_SilTerra(combined_params)
+_.rotate(90)
+
+# _ = c << s2s_adiabatic(combined_params)
+
+# _ = c << GSG_MRM_SilTerra(combined_params)
+
+c.show()
+
+
+
+
+
 
 # combined_params={**wscl2_params,**electrode_wscl2_params, **differential_electrode_params, **balun_sipho_params, "wsclDOEcell_placeGC":False, "PS_length": 1000}
 #
@@ -153,47 +229,6 @@ from shapely.geometry.polygon import Polygon
 # c.show()
 # #
 
-c = gf.Component("Test_SilTerra")
-combined_params = {**differential_electrode_params, **SilTerra_sipho_params, "gsgsg_variant": "DC", "s2s_type": "adiabatic",  #MMI, adiabatic, power
-
-                    "w_slot": 0.20,
-                    "w_slotWG": 0.20,
-                    "S2S_ADIA_W": 0.4,
-                    "S2S_ADIA_W0": 0.18,
-                    "S2S_ADIA_R": 0.2, #default to w_slotWG
-                    "S2S_ADIA_S": 0.17, #default to w_slot
-                    "S2S_ADIA_G": 0.17,
-                    "S2S_ADIA_L1": 4,
-                    "S2S_ADIA_L2": 4,
-                    "S2S_ADIA_L3": 42,
-                    "S2S_ADIA_B1": 2.25,
-                    "S2S_ADIA_B2": 0.87,
-                    "S2S_ADIA_B3": 5,
-                    "S2S_ADIA_C1": 0.525,
-                    "S2S_ADIA_C2": 0.13,
-
-                    "pad_center_gnd_width": 80,
-                    "pad_inner_gap_width": 20,
-                    "pad_sig_width": 80,
-
-                    "pad_length": 100,
-                    "trans_length": 150,                
-                    "S2S_length": 50,
-                    "PS_length": 50,                   
-
-                    "PS_center_gnd_width": 63,  #coupling_length +(bend_r-7.5)*2
-                    "PS_inner_gap_width": 15,
-                    "PS_sig_width": 40,
-            }
-
-
-_ = c << MRM_SilTerra(combined_params)
-
-# _ = c << s2s_adiabatic(combined_params)
-
-# _ = c << GSG_MRM_SilTerra(combined_params)
-
-c.show()
 
 # c = gf.Component("wsclDOEcell")
 # combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_from_PS": False, "PS_taper": True, "DC_MT1": False, "RF_out": True, "termination": 84, "s2s_type": "adiabatic",
@@ -289,7 +324,6 @@ c.show()
 #
 
 # c.show()
-
 
 
 
