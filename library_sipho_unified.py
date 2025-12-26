@@ -745,6 +745,7 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     w_slab = params["w_slab"]
     s2s_O_len_in = params["s2s_O_len_in"]
     offset_si_contact = w_slot / 2 + w_slotWG + params["w_si_contact"] / 2
+    buffer_ETCH_HM_overlay = params['buffer_ETCH_HM_overlay']
 
     len_in = params["s2s_O_len_in"]
     width_in = params["s2s_O_w_in"]
@@ -847,7 +848,10 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     P1 = gf.Polygon(list(zip(x_p, y_p)), layer=WG_LowRib)
     c_LowRib_top = gf.Component("LowRib_top")
     c_LowRib_top.add_polygon(P1)
-    c << c_LowRib_top
+
+    s_LowRib_top = P1.to_shapely()
+    s_LowRib_top_expand = s_LowRib_top.buffer(buffer_ETCH_HM_overlay, join_style="bevel")
+    c.add_polygon(s_LowRib_top_expand, layer=WG_LowRib)
 
     # #add P2 - central FETCH_COR
     # x_p = np.concatenate((x_D2, np.flip(x_D5)))
@@ -879,14 +883,14 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     y_p = np.concatenate((y_p, np.flip(y_S1_lower-(G+R-C2) - y_1)))
     P3 = gf.Polygon(list(zip(x_p, y_p)), layer=WG_HM)
     s_P3 = Polygon(zip(x_p, y_p))
-    s_P3 = s_P3.buffer(params["buffer_RIB_SLAB_overlay"], join_style="bevel")
+    s_P3 = s_P3.buffer(params["buffer_ETCH_HM_overlay"], join_style="bevel")
     c.add_polygon(s_P3, layer=WG_Strip)
 
     c_P2 = gf.Component()
     c_P2.add_polygon(P2)
     c_P3 = gf.Component()
     c_P3.add_polygon(P3)
-    c_sub_result = gf.geometry.boolean(A=c_P2, B=c_P3, operation="not", layer=WG_HM) #subtract slot from slot + slotWG
+    c_sub_result = gf.geometry.boolean(A=c_P2, B=c_P3, operation="not", layer=WG_HM, precision=1e-12) #subtract slot from slot + slotWG
     c << c_sub_result
 
     # #add P4
@@ -895,11 +899,14 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     # P4 = gf.Polygon(list(zip(x_p, y_p)), layer=RIB)
     # c.add_polygon(P4)
 
-    #add P5
+    #add P5 - bottom right rib slab
     x_p = np.concatenate((x_D5, np.flip(x_D6)))
     y_p = np.concatenate((y_D5, np.flip(y_D6)))
     P5 = gf.Polygon(list(zip(x_p, y_p)), layer=WG_LowRib)
-    c.add_polygon(P5)
+    P1 = gf.Polygon(list(zip(x_p, y_p)), layer=WG_LowRib)
+    s_LowRib_bot = P1.to_shapely()
+    s_LowRib_bot_expand = s_LowRib_bot.buffer(buffer_ETCH_HM_overlay, join_style="bevel")
+    c.add_polygon(s_LowRib_bot_expand, layer=WG_LowRib)
 
 
     coords = ([-L1-s2s_O_len_in, w_slab+w_slot/2+w_slotWG], [L1, w_slab+w_slot/2+w_slotWG], #left half of WG_Strip block
@@ -910,12 +917,12 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     c_P5.add_polygon(P5)
     c_P6 = gf.Component()
     c_P6.add_polygon(P6)
-    c_sub_result = gf.geometry.boolean(A=c_P6, B=c_LowRib_top, operation="not", layer=WG_Strip)
+    c_sub_result = gf.geometry.boolean(A=c_P6, B=c_LowRib_top, operation="not", layer=WG_Strip, precision=1e-12)
     c << c_sub_result
 
-    coords = ([-L1 - s2s_O_len_in, w_slab + w_slot / 2 + w_slotWG], [L1+L2+L3, w_slab + w_slot / 2 + w_slotWG],  # left half of WG_Strip block
-              [L1+L2+L3, -(w_slab + w_slot / 2 + w_slotWG)], [-L1 - s2s_O_len_in, -(w_slab + w_slot / 2 + w_slotWG)])
-    c.add_polygon(coords, layer=WG_LowRib)
+    # coords = ([-L1 - s2s_O_len_in, w_slab + w_slot / 2 + w_slotWG], [L1, w_slab + w_slot / 2 + w_slotWG],#[L1+L2+L3, w_slab + w_slot / 2 + w_slotWG],  # left half of WG_LowRib fill
+    #           [L1, -(w_slab + w_slot / 2 + w_slotWG)], [-L1 - s2s_O_len_in, -(w_slab + w_slot / 2 + w_slotWG)])
+    # c.add_polygon(coords, layer=WG_LowRib)
 
     # x_lower = np.concatenate((x0, x1))
     # y_lower = np.concatenate((y_S0_lower, y_S1_lower))
@@ -1099,9 +1106,9 @@ def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
 
     #s1 = sections.append(gf.Section(width=2*w_slotWG+w_slot, offset=0, layer=SLAB_COR, name="slotWG_1"))
 
-    offset_slab = (w_slot + w_slab) / 2 + w_slotWG - buffer_ETCH_HM_overlay/2
-    s3 = sections.append(gf.Section(width=(w_slab + buffer_ETCH_HM_overlay), offset=offset_slab, layer=WG_LowRib, name="slab_1"))
-    s4 = sections.append(gf.Section(width=(w_slab + buffer_ETCH_HM_overlay), offset=-offset_slab, layer=WG_LowRib, name="slab_2"))
+    offset_slab = (w_slot + w_slab) / 2 + w_slotWG
+    s3 = sections.append(gf.Section(width=(w_slab + 2*buffer_ETCH_HM_overlay), offset=offset_slab, layer=WG_LowRib, name="slab_1"))
+    s4 = sections.append(gf.Section(width=(w_slab + 2*buffer_ETCH_HM_overlay), offset=-offset_slab, layer=WG_LowRib, name="slab_2"))
     #s3 = sections.append(gf.Section(width=(w_slab), offset=offset_slab, layer=WG_LowRib, name="slab_1"))
     #s4 = sections.append(gf.Section(width=(w_slab), offset=-offset_slab, layer=WG_LowRib, name="slab_2"))
     #s4 = sections.append(gf.Section(width=(2*w_slab + w_slot+2*w_slotWG), offset=0, layer=WG_LowRib, name="slab_2"))
