@@ -193,7 +193,7 @@ def merge_clad(c, rad_round = 2):
         else :
             p_round = p1
         c.add_polygon(p_round, layer=RIB_ETCH)
-        c.add_polygon(p_round, layer=NOP)
+        # c.add_polygon(p_round, layer=NOP)
 
     """
     c_bool2 = gf.geometry.boolean_klayout(dd, dd, operation = 'not', layer1 = (31,2), layer2 = (131,1), layer3 = (31,2))
@@ -1554,7 +1554,7 @@ def PS_connected_s2s_only(params: dict, extra_slab: bool = False, Oband_variant:
 
     #add nitride removal, full etch
     s_FETCH_CLD = sections_extended_full.append(gf.Section(width=w_impl_window, offset=0, layer=RIB_ETCH, name="FETCH_CLD"))
-    s_NFE_CLD = sections_extended_full.append(gf.Section(width=w_impl_window, offset=0, layer=NOP, name="NOP"))
+    # s_NFE_CLD = sections_extended_full.append(gf.Section(width=w_impl_window, offset=0, layer=NOP, name="NOP"))
     x8 = gf.CrossSection(sections=sections_extended_full)
     p8 = gf.path.straight(length= 2*len_taper + 2*len_MMI + 2*len_in)
     PS_extended_full = gf.path.extrude(p8, x8)
@@ -1627,17 +1627,12 @@ c.show()
     """
     #imports for legacy sub-functions
     trans_length = params["trans_length"]
-    taper_type = params["taper_type"]
     sig_trace = params["sig_trace"]
-    termination = params["termination"]
-    extra_slab = params["extra_slab"]
-    config = params["config"]
     gsgsg_variant = params["gsgsg_variant"]
     Oband_variant = params["Oband_variant"]
     s2s_type  = params["s2s_type"]
     ps_config = params["ps_config"]
     gnds_shorted = params["gnds_shorted"]
-
 
     c = gf.Component()
 
@@ -1652,7 +1647,7 @@ c.show()
     PS_length = params["PS_length"]
     if gsgsg_variant == "DC":
         # DOE8 specific DC variant
-        GSGSG = SGS_MT2_DC(PS_length, trans_length, taper_type, sig_trace, config=config, params=params)
+        GSGSG = SGS_MT2_DC(PS_length, trans_length, params=params)
     # elif gsgsg_variant == "bond":
     #     GSGSG = GSGSG_MT2_symmetric(PS_length, trans_length, taper_type, sig_trace, electrode_params, termination=termination, ps_config=ps_config, gnds_shorted=True)
     else:
@@ -3315,11 +3310,11 @@ def TC_DOE_new(combined_params:dict, TCdoe: str, row: int = 1):
                            (0, -(offset_MT1 + w_MT1))],
                           layer=MT1)
 
-        c.add_polygon([(c.xmin, c.ymin),
-                       (c.xmax, c.ymin),
-                       (c.xmax, c.ymax),
-                       (c.xmin, c.ymax)],
-                      layer=NOP)
+        # c.add_polygon([(c.xmin, c.ymin),
+        #                (c.xmax, c.ymin),
+        #                (c.xmax, c.ymax),
+        #                (c.xmin, c.ymax)],
+        #               layer=NOP)
 
         c.add_polygon([(c.xmin, c.ymin),
                        (c.xmax, c.ymin),

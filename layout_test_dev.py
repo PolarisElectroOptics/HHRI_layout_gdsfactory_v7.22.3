@@ -47,6 +47,7 @@ combined_params = {**differential_electrode_params, **SilTerra_sipho_params, "gs
                     "PS_center_gnd_width": 63,  #coupling_length +(bend_r-7.5)*2
                     "PS_inner_gap_width": 15,
                     "PS_sig_width": 40,
+                    
             }
 
 _ = c << MRM_SilTerra(combined_params)

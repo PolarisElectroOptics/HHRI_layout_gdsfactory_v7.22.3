@@ -266,6 +266,7 @@ def SGS_piece_SilTerra(
 
     return comp, x1
 
+
 def GSG_piece_SilTerra(
     pad_G_width: float,
     pad_gap_width: float,
@@ -349,8 +350,10 @@ def GSG_MRM_SilTerra(params : dict):
     # Input contact pads
     pad_in, x1 = GSG_piece_SilTerra(pad_G_width, pad_gap_width, pad_S_width, pad_length, UTM2)
     _ = c << pad_in
-    pad_in_PAD, _ = GSG_piece_SilTerra(pad_G_width-10, pad_gap_width+10, pad_S_width-10, pad_length-10, PadAl)
-    _ = c << pad_in_PAD
+    pad_in_Al, x1_2 = GSG_piece_SilTerra(pad_G_width, pad_gap_width, pad_S_width, pad_length, PadAl)
+    _ = c << pad_in_Al  
+    pad_in_elec, x1_3 = GSG_piece_SilTerra(pad_G_width-10, pad_gap_width+10, pad_S_width-10, pad_length-10, Pad_Electrical)
+    _ = c << pad_in_elec
     _.movex(5)
 
     # S2S 1
@@ -407,7 +410,7 @@ def GSG_MRM_SilTerra(params : dict):
 
 
 @gf.cell 
-def SGS_MT2_DC(PS_length, trans_length, taper_type, sig_trace, params : dict, config="standard",):
+def SGS_MT2_DC(PS_length, trans_length, params : dict, ):
     """
     Unified GSGSG MT2 DC function combining all variants.
     
@@ -419,29 +422,21 @@ def SGS_MT2_DC(PS_length, trans_length, taper_type, sig_trace, params : dict, co
         config: "standard", "batch", or "compact"
     """
 
-    PS_center_gnd_width = params["PS_center_gnd_width"] #we should just call the params directly when needed..
-    PS_inner_gap_width = params["PS_inner_gap_width"]
-    PS_sig_width = params["PS_sig_width"]
-    PS_outer_gap_width = params["PS_outer_gap_width"]
-    PS_outer_gnd_width = params["PS_outer_gnd_width"]
+    PS_G_width = params["PS_center_gnd_width"] #we should just call the params directly when needed..
+    PS_gap_width = params["PS_inner_gap_width"]
+    PS_S_width = params["PS_sig_width"]
 
-    S2S_center_gnd_width = params["S2S_center_gnd_width"]
-    S2S_inner_gap_width = params["S2S_inner_gap_width"]
-    S2S_sig_width = params["S2S_sig_width"]
-    S2S_outer_gap_width = params["S2S_outer_gap_width"]
-    S2S_outer_gnd_width = params["S2S_outer_gnd_width"]
+    S2S_G_width =  PS_G_width
+    S2S_gap_width = PS_gap_width
+    S2S_S_width = PS_S_width
     S2S_length = params["S2S_length"]
 
-    pad_center_gnd_width = params["pad_center_gnd_width"]
-    pad_inner_gap_width = params["pad_inner_gap_width"]
-    pad_sig_width = params["pad_sig_width"]
-    pad_outer_gap_width = params["pad_outer_gap_width"]
-    pad_outer_gnd_width = params["pad_outer_gnd_width"]
+    pad_G_width = params["pad_center_gnd_width"]
+    pad_gap_width = params["pad_inner_gap_width"]
+    pad_S_width = params["pad_sig_width"]
     pad_length = params["pad_length"]
 
     sc_length = params["sc_length"]
-    layer_MT2 = params["layer_MT2"]
-    layer_PAD = params["layer_PAD"]
     spacing_x = params["spacing_x"]
     spacing_y = params["spacing_y"]
     DC_pad_size_x = params["DC_pad_size_x"]
@@ -449,73 +444,24 @@ def SGS_MT2_DC(PS_length, trans_length, taper_type, sig_trace, params : dict, co
     pads_rec_gap = params["pads_rec_gap"]
 
     c = gf.Component()
-    # Define PS parameters based on config
-    if config == "compact":
-        PS_center_gnd_width_local = 170
-        PS_inner_gap_width_local = 13
-        PS_sig_width_base = 10
-        PS_outer_gap_width_base = 34
-        PS_outer_gnd_width_local = 60
-        
-        S2S_center_gnd_width_base = 170
-        S2S_inner_gap_width_base = 13
-        S2S_sig_width_base = 34
-        S2S_outer_gap_width_base = 10
-        S2S_outer_gnd_width_base = 140
-    elif config == "standard" or config == "batch":  # "standard" or "batch"
-        PS_center_gnd_width_local = PS_center_gnd_width
-        PS_inner_gap_width_local = PS_inner_gap_width
-        PS_sig_width_base = PS_sig_width
-        PS_outer_gap_width_base = PS_outer_gap_width
-        PS_outer_gnd_width_local = PS_outer_gnd_width
-        
-        S2S_center_gnd_width_base = S2S_center_gnd_width
-        S2S_inner_gap_width_base = S2S_inner_gap_width
-        S2S_sig_width_base = S2S_sig_width
-        S2S_outer_gap_width_base = S2S_outer_gap_width
-        S2S_outer_gnd_width_base = S2S_outer_gnd_width
-
-    # Define PS signal trace parameters
-    if sig_trace == "narrow":
-        PS_sig_width_local = PS_sig_width_base
-        PS_outer_gap_width_local = PS_outer_gap_width_base
-    elif sig_trace in {"medium", "wide"}:
-        PS_sig_width_local = 60
-        PS_outer_gap_width_local = 90       
-    else: 
-        raise ValueError(f"Invalid sig_trace: {sig_trace}")
-
-    # Define S2S taper parameters
-    if taper_type == 1:   
-        S2S_center_gnd_width_local = PS_center_gnd_width_local
-        S2S_inner_gap_width_local = PS_inner_gap_width_local
-        S2S_sig_width_local = PS_sig_width_local
-        S2S_outer_gap_width_local = PS_outer_gap_width_local
-        S2S_outer_gnd_width_local = PS_outer_gnd_width_local
-    elif taper_type == 2:
-        S2S_center_gnd_width_local = S2S_center_gnd_width_base
-        S2S_inner_gap_width_local = S2S_inner_gap_width_base
-        S2S_sig_width_local = S2S_sig_width_base
-        S2S_outer_gap_width_local = S2S_outer_gap_width_base
-        S2S_outer_gnd_width_local = S2S_outer_gnd_width_base
-    else:
-        raise ValueError(f"Invalid taper_type: {taper_type}")
 
     # Build components (common structure)
     # Input contact pads
-    pad_in, x1 = SGS_piece(pad_center_gnd_width, pad_inner_gap_width, pad_sig_width, pad_outer_gap_width, pad_outer_gnd_width, pad_length, layer_MT2)
+    pad_in, x1 = SGS_piece_SilTerra(pad_G_width, pad_gap_width, pad_S_width, pad_length, UTM2)
     _ = c << pad_in
-    pad_in_PAD, _ = SGS_piece(pad_center_gnd_width-10, pad_inner_gap_width+10, pad_sig_width-10, pad_outer_gap_width+10, pad_outer_gnd_width-10, pad_length-10, layer_PAD)
-    _ = c << pad_in_PAD
+    pad_in_Al, x1_2 = SGS_piece_SilTerra(pad_G_width, pad_gap_width, pad_S_width, pad_length, PadAl)
+    _ = c << pad_in_Al  
+    pad_in_elec, x1_3 = SGS_piece_SilTerra(pad_G_width-10, pad_gap_width+10, pad_S_width-10, pad_length-10, Pad_Electrical)
+    _ = c << pad_in_elec
     _.movex(5)
 
     # S2S 1
-    s2s_1, x2 = SGS_piece(S2S_center_gnd_width_local, S2S_inner_gap_width_local, S2S_sig_width_local, S2S_outer_gap_width_local, S2S_outer_gnd_width_local, S2S_length, layer_MT2)
+    s2s_1, x2 = SGS_piece_SilTerra(S2S_G_width, S2S_gap_width, S2S_S_width, S2S_length, UTM2)
     _ = c << s2s_1
     _.movex(trans_length + pad_length)
 
     # Phase shifter region
-    PS, x3 = SGS_piece(PS_center_gnd_width_local, PS_inner_gap_width_local, PS_sig_width_local, PS_outer_gap_width_local, PS_outer_gnd_width_local, PS_length, layer_MT2)
+    PS, x3 = SGS_piece_SilTerra(PS_G_width, PS_gap_width, PS_S_width, PS_length, UTM2)
     _ = c << PS
     _.movex(trans_length + pad_length + S2S_length)
 
@@ -525,51 +471,15 @@ def SGS_MT2_DC(PS_length, trans_length, taper_type, sig_trace, params : dict, co
     _.movex(pad_length)
     
     # S2S 2
-    s2s_2, x4 = SGS_piece(S2S_center_gnd_width_local, S2S_inner_gap_width_local, S2S_sig_width_local, S2S_outer_gap_width_local, S2S_outer_gnd_width_local, S2S_length, layer_MT2)
+    s2s_2, x4 = SGS_piece_SilTerra(S2S_G_width, S2S_gap_width, S2S_S_width, S2S_length, UTM2)
     _ = c << s2s_2
     _.movex(trans_length + pad_length + S2S_length + PS_length)
-
-    # Different endings based on config
-    if config == "compact":
-        # Through connection with output pads
-        pad_out, x5 = SGS_piece(pad_center_gnd_width, pad_inner_gap_width, pad_sig_width, pad_outer_gap_width, pad_outer_gnd_width, pad_length, layer_MT2)
-        _ = c << pad_out
-        _.movex(trans_length*2 + pad_length + S2S_length*2 + PS_length)
-        pad_out_PAD, _ = SGS_piece(pad_center_gnd_width-10, pad_inner_gap_width+10, pad_sig_width-10, pad_outer_gap_width+10, pad_outer_gnd_width-10, pad_length-10, layer_PAD)
-        _ = c << pad_out_PAD
-        _.movex(5 + trans_length*2 + pad_length + S2S_length*2 + PS_length)
-        
-        # Transition 2
-        taper2 = gf.components.taper_cross_section_linear(x4, x5, length=trans_length)
-        _ = c << taper2
-        _.movex(pad_length + trans_length + PS_length + S2S_length*2)
-    else:
-        # Short circuit (standard and batch)
-        g_extend, _ = SGS_piece(S2S_center_gnd_width_local, S2S_inner_gap_width_local +S2S_sig_width_local, 0, S2S_outer_gap_width_local, S2S_outer_gnd_width_local, sc_length, layer_MT2)
-        _ = c << g_extend
-        _.movex(trans_length + pad_length + S2S_length + PS_length + S2S_length)
-        g_connect, _ = SGS_piece(S2S_center_gnd_width_local, 0, S2S_inner_gap_width_local +S2S_sig_width_local +S2S_outer_gap_width_local, 0, S2S_outer_gnd_width_local, sc_length, layer_MT2)
-        _ = c << g_connect
-        _.movex(trans_length + pad_length + S2S_length + PS_length + S2S_length + sc_length)
-
-    # Batch-specific extensions
-    if config == "batch":
-        extend_len = 10
-        extend_1_MT2 = c << gf.components.rectangle(size=(extend_len, pad_sig_width), layer=MT2)
-        extend_1_MT2.move((-extend_len, -(pad_center_gnd_width)/2 -pad_sig_width -pad_inner_gap_width))
-        via_1 = c << gf.components.rectangle(size=(extend_len/2, pad_sig_width-10), layer=VIA2)
-        via_1.move((-extend_len*3/4, -(pad_center_gnd_width)/2 -pad_sig_width -pad_inner_gap_width+5))
-        extend_1_MT1 = c << gf.components.rectangle(size=(extend_len, pad_sig_width), layer=MT1)
-        extend_1_MT1.move((-extend_len, -(pad_center_gnd_width)/2 -pad_sig_width -pad_inner_gap_width))
-        
-        extend_2_MT2 = c << gf.components.rectangle(size=(extend_len*3, pad_sig_width), layer=MT2)
-        extend_2_MT2.move((-extend_len*3, (pad_center_gnd_width)/2 +pad_inner_gap_width))
 
     # Add ports
     c.add_port(
         name="e_low",
         center=(pad_length + trans_length + S2S_length, 
-                -PS_center_gnd_width_local/2 - PS_inner_gap_width_local/2),
+                -PS_G_width/2 - PS_gap_width/2),
         width=1,
         orientation=0, 
         layer=MT2,
@@ -579,7 +489,7 @@ def SGS_MT2_DC(PS_length, trans_length, taper_type, sig_trace, params : dict, co
     c.add_port(
         name="e_up",
         center=(pad_length + trans_length + S2S_length, 
-                PS_center_gnd_width_local/2 + PS_inner_gap_width_local/2),
+                PS_G_width/2 + PS_gap_width/2),
         width=1,
         orientation=0, 
         layer=MT2,
