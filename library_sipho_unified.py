@@ -1020,7 +1020,8 @@ def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
         PS_length = params["PS_length"]
     else:
         PS_length = params["PS_sipho_length"]
-    buffer_RIB_SLAB_overlay = params["buffer_RIB_SLAB_overlay"]
+    #buffer_RIB_SLAB_overlay = params["buffer_RIB_SLAB_overlay"]
+    buffer_ETCH_HM_overlay = params["buffer_ETCH_HM_overlay"]
     #len_taper = params["len_taper"]
     #w_RY_outside_SE = params["w_RY_outside_SE"]
 
@@ -1091,19 +1092,19 @@ def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
     s1 = sections.append(gf.Section(width=w_slotWG, offset=offset_slotWG, layer=WG_HM, name="slotWG_1"))
     s2 = sections.append(gf.Section(width=w_slotWG, offset=-offset_slotWG, layer=WG_HM, name="slotWG_2"))
 
-    s2 = sections.append(gf.Section(width=w_slot + 2*buffer_RIB_SLAB_overlay, offset=0, layer=WG_Strip, name="WG_Strip"))
+    s2 = sections.append(gf.Section(width=w_slot + 2*buffer_ETCH_HM_overlay, offset=0, layer=WG_Strip, name="WG_Strip"))
 
     # s1 = sections.append(gf.Section(width=w_slotWG + offset_slotWG/2, offset=offset_slotWG*.75, layer=SLAB_COR, name="slotWG_1"))
     # s2 = sections.append(gf.Section(width=w_slotWG + offset_slotWG/2, offset=-offset_slotWG*.75, layer=SLAB_COR, name="slotWG_2"))
 
     #s1 = sections.append(gf.Section(width=2*w_slotWG+w_slot, offset=0, layer=SLAB_COR, name="slotWG_1"))
 
-    offset_slab = (w_slot + w_slab) / 2 + w_slotWG
-    # s3 = sections.append(gf.Section(width=(w_slab + buffer_RIB_SLAB_overlay * 2), offset=offset_slab, layer=WG_LowRib, name="slab_1"))
-    # s4 = sections.append(gf.Section(width=(w_slab + buffer_RIB_SLAB_overlay * 2), offset=-offset_slab, layer=WG_LowRib, name="slab_2"))
+    offset_slab = (w_slot + w_slab) / 2 + w_slotWG - buffer_ETCH_HM_overlay/2
+    s3 = sections.append(gf.Section(width=(w_slab + buffer_ETCH_HM_overlay), offset=offset_slab, layer=WG_LowRib, name="slab_1"))
+    s4 = sections.append(gf.Section(width=(w_slab + buffer_ETCH_HM_overlay), offset=-offset_slab, layer=WG_LowRib, name="slab_2"))
     #s3 = sections.append(gf.Section(width=(w_slab), offset=offset_slab, layer=WG_LowRib, name="slab_1"))
     #s4 = sections.append(gf.Section(width=(w_slab), offset=-offset_slab, layer=WG_LowRib, name="slab_2"))
-    s4 = sections.append(gf.Section(width=(2*w_slab + w_slot+2*w_slotWG), offset=0, layer=WG_LowRib, name="slab_2"))
+    #s4 = sections.append(gf.Section(width=(2*w_slab + w_slot+2*w_slotWG), offset=0, layer=WG_LowRib, name="slab_2"))
 
     # offset_si_contact = w_slot / 2 + w_slotWG + gap_si_contact + w_si_contact / 2
     # s5 = sections.append(gf.Section(width=w_si_contact, offset=offset_si_contact, layer=RIB, name="si_contact_1"))
@@ -1310,127 +1311,127 @@ def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
 
     return c
 
-@gf.cell
-def PS_slotWG_from_params(params: dict, Oband_variant) -> gf.Component:
-    """
-        AMF version
-        Unified phase shifter slot waveguide with all parameter variations.
-
-        Parameters:
-        - w_slot: slot width
-        - w_OXOP: oxide opening width
-        - PS_length: phase shifter length
-        - gap_IND_WG: gap between inductor and waveguide
-        - w_slotWG: slot waveguide width (defaults to global constant if None)
-        - gap_NCONT_WG: gap between N-contact and waveguide (defaults to global constant if None)
-        - gap_si_contact: gap between silicon contact and waveguide (defaults to global constant if None)
-        - buffer_RIB_SLAB_overlay: slab overlay buffer (defaults to global constant if None)
-        """
-
-    w_slot = params["w_slot"]
-    w_slotWG = params["w_slotWG"]
-    w_slab = params["w_slab"]
-    PS_length = params["PS_length"]
-    buffer_RIB_SLAB_overlay = params["buffer_RIB_SLAB_overlay"]
-
-    w_OXOP = params["w_OXOP"]
-    w_si_contact = params["w_si_contact"]
-    gap_si_contact = params["gap_si_contact"]
-
-    w_NCONT = params["w_NCONT"]
-    gap_NCONT_WG = params["gap_NCONT_WG"]
-    w_IND = params["w_IND"]
-    gap_IND_WG = params["gap_IND_WG"]
-    w_NIM = params["w_NIM"]
-
-    w_MT1 = params["w_MT1"]
-    min_gap_OXOP_MT = params["min_gap_OXOP_MT"]
-    via_size = params["via_size"]
-    gap_via_1 = params["gap_via_1"]
-    min_inc_via_1 = params["min_inc_via_1"]
-    min_exc_of_via_2 = params["min_exc_of_via_2"]
-
-    # Choose parameter names based on variant
-    if Oband_variant:
-        len_in = params["s2s_O_len_in"]
-        width_in = params["s2s_O_w_in"]
-        len_MMI = params["s2s_O_len_MMI"]
-        width_MMI = params["s2s_O_w_MMI"]
-        len_taper = params["s2s_O_len_taper"]
-    else:
-        len_in = params["s2s_len_in"]
-        width_in = params["s2s_width_in"]
-        len_MMI = params["s2s_len_MMI"]
-        width_MMI = params["s2s_width_MMI"]
-        len_taper = params["s2s_len_taper"]
-
-    #print("PS_slotWG buffer_RIB_SLAB_overlay: " + str(buffer_RIB_SLAB_overlay))
-    offset_slotWG = (w_slotWG + w_slot)/2
-    s1 = gf.Section(width=w_slotWG, offset=offset_slotWG, layer=RIB, name="slotWG_1")
-    s2 = gf.Section(width=w_slotWG, offset=-offset_slotWG, layer=RIB, name="slotWG_2")
-
-    offset_slab = (w_slot + w_slab)/2 + w_slotWG
-    s3 = gf.Section(width=(w_slab+ buffer_RIB_SLAB_overlay*2), offset=offset_slab, layer=SLAB, name="slab_1")
-    s4 = gf.Section(width=(w_slab+ buffer_RIB_SLAB_overlay*2), offset=-offset_slab, layer=SLAB, name="slab_2")
-
-    offset_si_contact = w_slot/2 + w_slotWG + gap_si_contact + w_si_contact/2
-    s5 = gf.Section(width=w_si_contact, offset=offset_si_contact, layer=RIB, name="si_contact_1")
-    s6 = gf.Section(width=w_si_contact, offset=-offset_si_contact, layer=RIB, name="sl_contact_2")
-
-    offset_MT1 = w_OXOP/2 + w_MT1/2 + min_gap_OXOP_MT
-    s7 = gf.Section(width=w_MT1, offset=offset_MT1, layer=MT1, name="MT1_1")
-    s8 = gf.Section(width=w_MT1, offset=-offset_MT1, layer=MT1, name="MT1_2")
-
-    offset_via_1 = w_OXOP/2 + min_gap_OXOP_MT + min_inc_via_1 + via_size/2
-    s9v = ComponentAlongPath(component=gf.c.via(size=(3,3), layer=VIA1), spacing=via_size + gap_via_1, padding=via_size, enclosure=min_inc_via_1, offset=offset_via_1)
-    s10v = ComponentAlongPath(component=gf.c.via(size=(3,3), layer=VIA1), spacing=via_size + gap_via_1, padding=via_size, enclosure=min_inc_via_1, offset=-offset_via_1)
-
-    offset_via_2 = w_OXOP/2 + min_gap_OXOP_MT + min_inc_via_1 + via_size + min_exc_of_via_2 + via_size/2
-    s11v = ComponentAlongPath(component=gf.c.via(size=(3,3), layer=VIA2), spacing=min_exc_of_via_2 + via_size, padding=via_size, offset=offset_via_2)
-    s12v = ComponentAlongPath(component=gf.c.via(size=(3,3), layer=VIA2), spacing=min_exc_of_via_2 + via_size, padding=via_size, offset=-offset_via_2)
-
-    offset_NCONT = w_slot/2 + w_slotWG + gap_NCONT_WG + w_NCONT/2
-    s13 = gf.Section(width=w_NCONT, offset=offset_NCONT, layer=NCONT, name="NCONT_1")
-    s14 = gf.Section(width=w_NCONT, offset=-offset_NCONT, layer=NCONT, name="NCONT_2")
-
-    offset_IND = w_slot/2 + w_slotWG + gap_IND_WG + w_IND/2
-    s15 = gf.Section(width=w_IND, offset=offset_IND, layer=IND, name="IND_1")
-    s16 = gf.Section(width=w_IND, offset=-offset_IND, layer=IND, name="IND_2")
-
-    s17 = gf.Section(width=w_NIM, offset=0, layer=NIM, name="NIM")
-
-    s151 = gf.Section(width=w_OXOP, layer=OXOP, name="oxide_open")
-
-    x1 = gf.CrossSection(
-        sections=(s1, s2, s3, s4, s5, s6, s7, s8, s13, s14, s15, s16, s17, s151),
-        components_along_path=[s9v, s10v, s11v, s12v],
-        )
-
-    p1 = gf.path.straight(length=PS_length)
-    PS = gf.path.extrude(p1, x1)
-
-    # Clear existing ports and add custom ports
-    PS.ports.clear()
-
-    PS.add_port(
-        name = "o1",
-        center = (0, 0),
-        width = w_slot,
-        orientation = 180,
-        layer = RIB,
-        port_type = "optical",
-        )
-
-    PS.add_port(
-        name = "o2",
-        center = (PS_length, 0),
-        width = w_slot,
-        orientation = 0,
-        layer = RIB,
-        port_type = "optical",
-        )
-
-    return PS
+# @gf.cell #unused for SilTerra
+# def PS_slotWG_from_params(params: dict, Oband_variant) -> gf.Component:
+#     """
+#         AMF version
+#         Unified phase shifter slot waveguide with all parameter variations.
+#
+#         Parameters:
+#         - w_slot: slot width
+#         - w_OXOP: oxide opening width
+#         - PS_length: phase shifter length
+#         - gap_IND_WG: gap between inductor and waveguide
+#         - w_slotWG: slot waveguide width (defaults to global constant if None)
+#         - gap_NCONT_WG: gap between N-contact and waveguide (defaults to global constant if None)
+#         - gap_si_contact: gap between silicon contact and waveguide (defaults to global constant if None)
+#         - buffer_RIB_SLAB_overlay: slab overlay buffer (defaults to global constant if None)
+#         """
+#
+#     w_slot = params["w_slot"]
+#     w_slotWG = params["w_slotWG"]
+#     w_slab = params["w_slab"]
+#     PS_length = params["PS_length"]
+#     buffer_RIB_SLAB_overlay = params["buffer_RIB_SLAB_overlay"]
+#
+#     w_OXOP = params["w_OXOP"]
+#     w_si_contact = params["w_si_contact"]
+#     gap_si_contact = params["gap_si_contact"]
+#
+#     w_NCONT = params["w_NCONT"]
+#     gap_NCONT_WG = params["gap_NCONT_WG"]
+#     w_IND = params["w_IND"]
+#     gap_IND_WG = params["gap_IND_WG"]
+#     w_NIM = params["w_NIM"]
+#
+#     w_MT1 = params["w_MT1"]
+#     min_gap_OXOP_MT = params["min_gap_OXOP_MT"]
+#     via_size = params["via_size"]
+#     gap_via_1 = params["gap_via_1"]
+#     min_inc_via_1 = params["min_inc_via_1"]
+#     min_exc_of_via_2 = params["min_exc_of_via_2"]
+#
+#     # Choose parameter names based on variant
+#     if Oband_variant:
+#         len_in = params["s2s_O_len_in"]
+#         width_in = params["s2s_O_w_in"]
+#         len_MMI = params["s2s_O_len_MMI"]
+#         width_MMI = params["s2s_O_w_MMI"]
+#         len_taper = params["s2s_O_len_taper"]
+#     else:
+#         len_in = params["s2s_len_in"]
+#         width_in = params["s2s_width_in"]
+#         len_MMI = params["s2s_len_MMI"]
+#         width_MMI = params["s2s_width_MMI"]
+#         len_taper = params["s2s_len_taper"]
+#
+#     #print("PS_slotWG buffer_RIB_SLAB_overlay: " + str(buffer_RIB_SLAB_overlay))
+#     offset_slotWG = (w_slotWG + w_slot)/2
+#     s1 = gf.Section(width=w_slotWG, offset=offset_slotWG, layer=RIB, name="slotWG_1")
+#     s2 = gf.Section(width=w_slotWG, offset=-offset_slotWG, layer=RIB, name="slotWG_2")
+#
+#     offset_slab = (w_slot + w_slab)/2 + w_slotWG
+#     s3 = gf.Section(width=(w_slab+ buffer_RIB_SLAB_overlay*2), offset=offset_slab, layer=SLAB, name="slab_1")
+#     s4 = gf.Section(width=(w_slab+ buffer_RIB_SLAB_overlay*2), offset=-offset_slab, layer=SLAB, name="slab_2")
+#
+#     offset_si_contact = w_slot/2 + w_slotWG + gap_si_contact + w_si_contact/2
+#     s5 = gf.Section(width=w_si_contact, offset=offset_si_contact, layer=RIB, name="si_contact_1")
+#     s6 = gf.Section(width=w_si_contact, offset=-offset_si_contact, layer=RIB, name="sl_contact_2")
+#
+#     offset_MT1 = w_OXOP/2 + w_MT1/2 + min_gap_OXOP_MT
+#     s7 = gf.Section(width=w_MT1, offset=offset_MT1, layer=MT1, name="MT1_1")
+#     s8 = gf.Section(width=w_MT1, offset=-offset_MT1, layer=MT1, name="MT1_2")
+#
+#     offset_via_1 = w_OXOP/2 + min_gap_OXOP_MT + min_inc_via_1 + via_size/2
+#     s9v = ComponentAlongPath(component=gf.c.via(size=(3,3), layer=VIA1), spacing=via_size + gap_via_1, padding=via_size, enclosure=min_inc_via_1, offset=offset_via_1)
+#     s10v = ComponentAlongPath(component=gf.c.via(size=(3,3), layer=VIA1), spacing=via_size + gap_via_1, padding=via_size, enclosure=min_inc_via_1, offset=-offset_via_1)
+#
+#     offset_via_2 = w_OXOP/2 + min_gap_OXOP_MT + min_inc_via_1 + via_size + min_exc_of_via_2 + via_size/2
+#     s11v = ComponentAlongPath(component=gf.c.via(size=(3,3), layer=VIA2), spacing=min_exc_of_via_2 + via_size, padding=via_size, offset=offset_via_2)
+#     s12v = ComponentAlongPath(component=gf.c.via(size=(3,3), layer=VIA2), spacing=min_exc_of_via_2 + via_size, padding=via_size, offset=-offset_via_2)
+#
+#     offset_NCONT = w_slot/2 + w_slotWG + gap_NCONT_WG + w_NCONT/2
+#     s13 = gf.Section(width=w_NCONT, offset=offset_NCONT, layer=NCONT, name="NCONT_1")
+#     s14 = gf.Section(width=w_NCONT, offset=-offset_NCONT, layer=NCONT, name="NCONT_2")
+#
+#     offset_IND = w_slot/2 + w_slotWG + gap_IND_WG + w_IND/2
+#     s15 = gf.Section(width=w_IND, offset=offset_IND, layer=IND, name="IND_1")
+#     s16 = gf.Section(width=w_IND, offset=-offset_IND, layer=IND, name="IND_2")
+#
+#     s17 = gf.Section(width=w_NIM, offset=0, layer=NIM, name="NIM")
+#
+#     s151 = gf.Section(width=w_OXOP, layer=OXOP, name="oxide_open")
+#
+#     x1 = gf.CrossSection(
+#         sections=(s1, s2, s3, s4, s5, s6, s7, s8, s13, s14, s15, s16, s17, s151),
+#         components_along_path=[s9v, s10v, s11v, s12v],
+#         )
+#
+#     p1 = gf.path.straight(length=PS_length)
+#     PS = gf.path.extrude(p1, x1)
+#
+#     # Clear existing ports and add custom ports
+#     PS.ports.clear()
+#
+#     PS.add_port(
+#         name = "o1",
+#         center = (0, 0),
+#         width = w_slot,
+#         orientation = 180,
+#         layer = RIB,
+#         port_type = "optical",
+#         )
+#
+#     PS.add_port(
+#         name = "o2",
+#         center = (PS_length, 0),
+#         width = w_slot,
+#         orientation = 0,
+#         layer = RIB,
+#         port_type = "optical",
+#         )
+#
+#     return PS
 
 
 @gf.cell
