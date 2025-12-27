@@ -166,7 +166,6 @@ ps_SilTerra_sipho_params = {
     "MT1_from_PS": True,
     "w_si_contact": 9.5,  # 10.5,
     "gap_si_contact": -2.25,
-   # "gap_silicide":,
     "silicide_width": 3.5,
     "gap_silicide": 0.55,
 
@@ -184,7 +183,6 @@ ps_SilTerra_sipho_params = {
     "slot_size_MT1": (1.5, 1.5),
     "slot_gap_MT1": 10,
     
-
     "w_MT2": 20,  # 10,
     "min_inc_via_1": 0.1, #CHECK
     "num_rows_V2": 2,
