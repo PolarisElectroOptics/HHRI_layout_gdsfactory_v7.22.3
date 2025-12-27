@@ -1038,7 +1038,7 @@ def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
     w_OXOP = params["w_OXOP"]
     w_si_contact = params["w_si_contact"]
     gap_si_contact = params["gap_si_contact"]
-
+    w_outer_WG_Strip = params["w_outer_WG_Strip"]
     w_impl_window = params["w_impl_window"]
 
     w_NCONT = params["w_NCONT"]
@@ -1098,31 +1098,22 @@ def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
 
     offset_slotWG = (w_slotWG + w_slot) / 2
 
-    #s1 = sections.append(gf.Section(width = w_slot+2*w_slotWG, offset=0, layer=WG_HM))
-    s1 = sections.append(gf.Section(width=w_slotWG, offset=offset_slotWG, layer=WG_HM, name="slotWG_1"))
-    s2 = sections.append(gf.Section(width=w_slotWG, offset=-offset_slotWG, layer=WG_HM, name="slotWG_2"))
+    s1_1 = sections.append(gf.Section(width=w_slotWG, offset=offset_slotWG, layer=WG_HM, name="slotWG_1"))
+    s1_2 = sections.append(gf.Section(width=w_slotWG, offset=-offset_slotWG, layer=WG_HM, name="slotWG_2"))
 
-    s2 = sections.append(gf.Section(width=w_slot + 2*buffer_ETCH_HM_overlay, offset=0, layer=WG_Strip, name="WG_Strip"))
-
-    # s1 = sections.append(gf.Section(width=w_slotWG + offset_slotWG/2, offset=offset_slotWG*.75, layer=SLAB_COR, name="slotWG_1"))
-    # s2 = sections.append(gf.Section(width=w_slotWG + offset_slotWG/2, offset=-offset_slotWG*.75, layer=SLAB_COR, name="slotWG_2"))
-
-    #s1 = sections.append(gf.Section(width=2*w_slotWG+w_slot, offset=0, layer=SLAB_COR, name="slotWG_1"))
+    s2 = sections.append(gf.Section(width=w_slot + 2*buffer_ETCH_HM_overlay, offset=0, layer=WG_Strip, name="slot_etch"))
 
     offset_slab = (w_slot + w_slab) / 2 + w_slotWG
     s3 = sections.append(gf.Section(width=(w_slab + 2*buffer_ETCH_HM_overlay), offset=offset_slab, layer=WG_LowRib, name="slab_1"))
     s4 = sections.append(gf.Section(width=(w_slab + 2*buffer_ETCH_HM_overlay), offset=-offset_slab, layer=WG_LowRib, name="slab_2"))
-    #s3 = sections.append(gf.Section(width=(w_slab), offset=offset_slab, layer=WG_LowRib, name="slab_1"))
-    #s4 = sections.append(gf.Section(width=(w_slab), offset=-offset_slab, layer=WG_LowRib, name="slab_2"))
-    #s4 = sections.append(gf.Section(width=(2*w_slab + w_slot+2*w_slotWG), offset=0, layer=WG_LowRib, name="slab_2"))
-
-    # offset_si_contact = w_slot / 2 + w_slotWG + gap_si_contact + w_si_contact / 2
-    # s5 = sections.append(gf.Section(width=w_si_contact, offset=offset_si_contact, layer=RIB, name="si_contact_1"))
-    # s6 = sections.append(gf.Section(width=w_si_contact, offset=-offset_si_contact, layer=RIB, name="sl_contact_2"))
 
     offset_si_contact = w_slot / 2 + w_slotWG + w_slab + w_si_contact / 2
     s5 = sections_extended.append(gf.Section(width=w_si_contact, offset=offset_si_contact, layer=WG_HM, name="si_contact_1"))
     s6 = sections_extended.append(gf.Section(width=w_si_contact, offset=-offset_si_contact, layer=WG_HM, name="sl_contact_2"))
+    
+    offset_outer_WG_Strip = w_slot / 2 + w_slotWG + w_slab + w_si_contact + w_outer_WG_Strip/2 - buffer_ETCH_HM_overlay
+    s7 = sections_extended.append(gf.Section(width= w_outer_WG_Strip, offset=offset_outer_WG_Strip, layer=WG_Strip, name="outer_WG_Strip_1"))
+    s8 = sections_extended.append(gf.Section(width= w_outer_WG_Strip, offset=-offset_outer_WG_Strip, layer=WG_Strip, name="outer_WG_Strip_2"))
 
     s24 = sections_doping_extend.append(gf.Section(width=w_NIM, offset=0, layer=NIM, name="NIM"))
 
@@ -1130,7 +1121,7 @@ def PS_slotWG_SilTerra(params: dict, position="") -> gf.Component:
     s22 = sections_doping_extend.append(gf.Section(width=w_IND, offset=offset_IND, layer=IND, name="IND_1"))
     s23 = sections_doping_extend.append(gf.Section(width=w_IND, offset=-offset_IND, layer=IND, name="IND_2"))
 
-    #w_NCONT = w_slab / 2 + offset_slab - (offset_IND + w_IND / 2) + w_RY_outside_SE
+    # NPP_Impl
     offset_NCONT = w_slot/2 + w_slotWG + gap_NCONT_WG + w_NCONT/2
     s20 = sections_doping_extend.append(gf.Section(width=w_NCONT, offset=(offset_NCONT), layer=NCONT, name="NCONT_1"))
     s21 = sections_doping_extend.append(gf.Section(width=w_NCONT, offset=-(offset_NCONT), layer=NCONT, name="NCONT_2"))
