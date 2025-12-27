@@ -884,7 +884,9 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     P3 = gf.Polygon(list(zip(x_p, y_p)), layer=WG_HM)
     s_P3 = Polygon(zip(x_p, y_p))
     s_P3 = s_P3.buffer(params["buffer_ETCH_HM_overlay"], join_style="bevel")
-    c.add_polygon(s_P3, layer=WG_Strip)
+    c_s_P3 = gf.Component()
+    c_s_P3.add_polygon(s_P3, layer=WG_Strip)
+    c << c_s_P3
 
     c_P2 = gf.Component()
     c_P2.add_polygon(P2)
@@ -906,7 +908,10 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     P1 = gf.Polygon(list(zip(x_p, y_p)), layer=WG_LowRib)
     s_LowRib_bot = P1.to_shapely()
     s_LowRib_bot_expand = s_LowRib_bot.buffer(buffer_ETCH_HM_overlay, join_style="bevel")
-    c.add_polygon(s_LowRib_bot, layer=WG_LowRib)
+    c_LowRib_bot_expand = gf.Component()
+    c_LowRib_bot_expand.add_polygon(s_LowRib_bot_expand, layer=WG_LowRib)
+    c_LowRib_bot_expand_trimmed = gf.geometry.boolean(A=c_LowRib_bot_expand, B=c_s_P3, operation="not", layer=WG_LowRib, precision=1e-12)
+    c << c_LowRib_bot_expand_trimmed
 
     x_cross_point = -L1+1.65
     WG_Strip_coords = ([-L1-s2s_O_len_in, W/2-buffer_ETCH_HM_overlay], [L1, T/2+0.5],#[x_cross_point, L1_slope * ((x_cross_point)+L1) + W/2], [L1, T/2],
