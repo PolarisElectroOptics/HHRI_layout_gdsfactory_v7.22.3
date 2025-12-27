@@ -745,6 +745,7 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     w_slab = params["w_slab"]
     s2s_O_len_in = params["s2s_O_len_in"]
     offset_si_contact = w_slot / 2 + w_slotWG + params["w_si_contact"] / 2
+    buffer_RIB_SLAB_overlay = params["buffer_RIB_SLAB_overlay"]
     buffer_ETCH_HM_overlay = params['buffer_ETCH_HM_overlay']
 
     len_in = params["s2s_O_len_in"]
@@ -850,7 +851,7 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     c_LowRib_top.add_polygon(P1)
 
     s_LowRib_top = P1.to_shapely()
-    s_LowRib_top_expand = s_LowRib_top.buffer(buffer_ETCH_HM_overlay, join_style="bevel")
+    s_LowRib_top_expand = s_LowRib_top.buffer(buffer_ETCH_HM_overlay, join_style="mitre")
     c.add_polygon(s_LowRib_top_expand, layer=WG_LowRib)
 
     # #add P2 - central FETCH_COR
@@ -883,7 +884,7 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     y_p = np.concatenate((y_p, np.flip(y_S1_lower-(G+R-C2) - y_1)))
     P3 = gf.Polygon(list(zip(x_p, y_p)), layer=WG_HM)
     s_P3 = Polygon(zip(x_p, y_p))
-    s_P3 = s_P3.buffer(params["buffer_ETCH_HM_overlay"], join_style="bevel")
+    s_P3 = s_P3.buffer(params["buffer_ETCH_HM_overlay"], join_style="mitre")
     c_s_P3 = gf.Component()
     c_s_P3.add_polygon(s_P3, layer=WG_Strip)
     c << c_s_P3
@@ -904,10 +905,9 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     #add P5 - bottom right rib slab
     x_p = np.concatenate((x_D5, np.flip(x_D6)))
     y_p = np.concatenate((y_D5, np.flip(y_D6)))
-    P5 = gf.Polygon(list(zip(x_p, y_p)), layer=WG_LowRib)
-    P1 = gf.Polygon(list(zip(x_p, y_p)), layer=WG_LowRib)
-    s_LowRib_bot = P1.to_shapely()
-    s_LowRib_bot_expand = s_LowRib_bot.buffer(buffer_ETCH_HM_overlay, join_style="bevel")
+    P5 = gf.Polygon(list(zip(x_p-buffer_RIB_SLAB_overlay, y_p)), layer=WG_LowRib)
+    s_LowRib_bot = P5.to_shapely()
+    s_LowRib_bot_expand = s_LowRib_bot.buffer(buffer_RIB_SLAB_overlay, join_style="mitre")
     c_LowRib_bot_expand = gf.Component()
     c_LowRib_bot_expand.add_polygon(s_LowRib_bot_expand, layer=WG_LowRib)
     c_LowRib_bot_expand_trimmed = gf.geometry.boolean(A=c_LowRib_bot_expand, B=c_s_P3, operation="not", layer=WG_LowRib, precision=1e-12)
