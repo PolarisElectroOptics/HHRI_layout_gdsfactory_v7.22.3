@@ -106,7 +106,6 @@ ps_balun_sipho_params = { #default for SYSTEM DIE 1, leave as is
 
     "w_si_contact": 13.5,  # 10.5,
     "gap_si_contact": -2.25,
-   # "gap_silicide":,
     "silicide_width": 3,
     "gap_silicide": 0.55,
     "electrical": True,
@@ -663,65 +662,65 @@ DOE8_params = {
     "trans_length": 200,
 }
 
-relia_params = {
-    "DOE_name": "relia",
-    # slot WG parameters
-    "w_slot": 0.2,
-    "w_slotWG": 0.31,
-    "w_slab": 4,
-    "PS_length": 1000,
-    "buffer_RIB_SLAB_overlay": 0.09,
+# relia_params = {
+#     "DOE_name": "relia",
+#     # slot WG parameters
+#     "w_slot": 0.2,
+#     "w_slotWG": 0.31,
+#     "w_slab": 4,
+#     "PS_length": 1000,
+#     "buffer_RIB_SLAB_overlay": 0.09,
 
-    # PS structures
-    "w_OXOP": 3,
-    "w_si_contact": 7,
-    "gap_si_contact": 3,
+#     # PS structures
+#     "w_OXOP": 3,
+#     "w_si_contact": 7,
+#     "gap_si_contact": 3,
 
-    # doping regions
-    "w_NCONT": 8,
-    "gap_NCONT_WG": 2.5,
-    "w_IND": 2.5,
-    "gap_IND_WG": 1,
-    "w_NIM": 6,
-    "delta_to_len_taper_NIM": -0.5,
+#     # doping regions
+#     "w_NCONT": 8,
+#     "gap_NCONT_WG": 2.5,
+#     "w_IND": 2.5,
+#     "gap_IND_WG": 1,
+#     "w_NIM": 6,
+#     "delta_to_len_taper_NIM": -0.5,
 
-    # conductive path structures
-    "w_MT1": 10.5,
-    "min_gap_OXOP_MT": 5,
-    "via_size": 3,
-    "gap_via_1": 2,
-    "min_inc_via_1": 0.5,
-    "min_exc_of_via_2": 2,
+#     # conductive path structures
+#     "w_MT1": 10.5,
+#     "min_gap_OXOP_MT": 5,
+#     "via_size": 3,
+#     "gap_via_1": 2,
+#     "min_inc_via_1": 0.5,
+#     "min_exc_of_via_2": 2,
 
-    # s2s parameters
-    "s2s_len_in": 2.02,
-    "s2s_width_in": 0.5,
-    "s2s_len_MMI": 1.38,
-    "s2s_width_MMI": 1.3,
-    "s2s_len_taper": 6,
-    "s2s_gap_MMI_extra_slab": 0.4,
+#     # s2s parameters
+#     "s2s_len_in": 2.02,
+#     "s2s_width_in": 0.5,
+#     "s2s_len_MMI": 1.38,
+#     "s2s_width_MMI": 1.3,
+#     "s2s_len_taper": 6,
+#     "s2s_gap_MMI_extra_slab": 0.4,
 
-    # PS types
-    "PS_type": 1,
+#     # PS types
+#     "PS_type": 1,
 
-    # LC droplet boundary
-    "LC_bound_width": 50,
+#     # LC droplet boundary
+#     "LC_bound_width": 50,
 
-    "frm_w": 25000,
-    "frm_len": 30300,
-    "trench_w": 100,
+#     "frm_w": 25000,
+#     "frm_len": 30300,
+#     "trench_w": 100,
 
-    # Dam array parameters
-    "dam_w": 1000,
-    "dam_len": 1500,
-    "dam_wall_w": 100,
-    "dam_N": 9,
-    "dam_pitch_w": 2500,
-    "dam_pitch_len": 2750,
+#     # Dam array parameters
+#     "dam_w": 1000,
+#     "dam_len": 1500,
+#     "dam_wall_w": 100,
+#     "dam_N": 9,
+#     "dam_pitch_w": 2500,
+#     "dam_pitch_len": 2750,
 
-    "MMI_delta_L": 70,
-    "Si_WG_pitch": 10,
-}
+#     "MMI_delta_L": 70,
+#     "Si_WG_pitch": 10,
+# }
 
 
 wscl2_params = {
@@ -785,70 +784,7 @@ wscl2_params = {
     "Si_WG_pitch": 10,
 }
 
-SEM_params = {**DOE8_params, "w_OXOP": 18, "w_si_contact": 7, "gap_si_contact": 3.5, "w_IND_WG": 18}
-# # w_OXOP = 3
-# # w_IND_WG = 18
-# # w_si_contact = 7
-# # gap_si_contact = 3.5
-#     "DOE_name": "SEM",
-#     # slot WG parameters
-#     "w_slot": 0.15,
-#     "w_slotWG": 0.27,
-#     "w_IND_WG": 18,
-#     "w_slab": 4,
-#     "PS_length": 1000,
-#     "buffer_RIB_SLAB_overlay": 0.09,
-#
-#     # PS structures
-#     "w_OXOP": 3,
-#     "w_si_contact": 7,
-#     "gap_si_contact": 3.5,
-#
-#     # doping regions
-#     "w_NCONT": 8,
-#     "gap_NCONT_WG": 3,
-#     "w_IND": 2.5,
-#     "gap_IND_WG": 1,
-#     "w_NIM": 6,
-#     "delta_to_len_taper_NIM": -0.5,
-#
-#     # conductive path structures
-#     "w_MT1": 10.5,
-#     "min_gap_OXOP_MT": 5,
-#     "via_size": 3,
-#     "gap_via_1": 2,
-#     "min_inc_via_1": 0.5,
-#     "min_exc_of_via_2": 2,
-#
-#     # s2s parameters
-#     "s2s_len_in": 2.02,
-#     "s2s_width_in": 0.5,
-#     "s2s_len_MMI": 1.38,
-#     "s2s_width_MMI": 1.3,
-#     "s2s_len_taper": 6,
-#     "s2s_gap_MMI_extra_slab": 0.4,
-#
-#     # PS types
-#     "PS_type": 1,
-#
-#     # LC droplet boundary
-#     "LC_bound_width": 50,
-#
-#     "frm_w": 25000,
-#     "frm_len": 30300,
-#     "trench_w": 100,
-#
-#     # Dam array parameters
-#     "dam_w": 1000,
-#     "dam_len": 1500,
-#     "dam_wall_w": 100,
-#     "dam_N": 9,
-#     "dam_pitch_w": 2500,
-#     "dam_pitch_len": 2750,
-#
-#     "MMI_delta_L": 70,
-#     "Si_WG_pitch": 10,
-# }
+
 
 # Parameter map for easy access
 DOE_PARAMS = {

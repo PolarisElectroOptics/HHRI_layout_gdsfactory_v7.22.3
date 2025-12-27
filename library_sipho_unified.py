@@ -3673,7 +3673,7 @@ c.show()
     coupling_length = 48
     coupling_gap = 0.25
     bus_length = coupling_length
-    bus_extend = 50
+    bus_extend = 96
     bend_r = 15
     
     c = gf.Component()
@@ -3687,9 +3687,9 @@ c.show()
     ref_bend_4 = c << gf.components.bend_euler(radius=bend_r, angle=90, npoints=40, cross_section = rib_Oband)
     ref_bend_4.connect('o2', ref_coupling.ports["o1"])
 
-    ref_bus_ext1 = c << gf.components.straight(length=bus_length, cross_section = rib_Oband)
+    ref_bus_ext1 = c << gf.components.straight(length=bus_extend, cross_section = rib_Oband)
     ref_bus_ext1.connect('o1', ref_bus.ports["o2"])
-    ref_bus_ext2 = c << gf.components.straight(length=bus_length, cross_section = rib_Oband)
+    ref_bus_ext2 = c << gf.components.straight(length=bus_extend, cross_section = rib_Oband)
     ref_bus_ext2.connect('o2', ref_bus.ports["o1"])   
 
     # Create two PS_connected
@@ -3719,20 +3719,31 @@ c.show()
   
     ref_UTM2 = c << GSG_MRM_SilTerra(params)
     ref_UTM2.connect('e_MRM', c.ports["e1"])
-    
+
+    ports_ref_bus_ext = []
+    ports = [ref_bus_ext2["o1"], ref_bus_ext1["o2"], ]
+    routes, ports_new = gf.routing.route_ports_to_side(
+        ports,
+        side="south",
+        radius=bend_r,
+        extension_length=174.35,
+        cross_section=rib_Oband
+    )
+    for route in routes:
+        c.add(route.references)
+    ports_ref_bus_ext.extend(ports_new)
+
+    c.add_port("o1", port=ports_ref_bus_ext[0], layer=WG_HM)
+    c.add_port("o2", port=ports_ref_bus_ext[1], layer=WG_HM)
 
     # # Connect electrical ports
     # ref_PS_1.connect("e_MT2", ref_SGS.ports["e_up"])
     # ref_PS_2.connect("e_MT2", ref_SGS.ports["e_low"])
 
-    # Add optical ports
-    c.add_port("o1", port=ref_bus_ext2["o1"])
-    c.add_port("o2", port=ref_bus_ext1["o2"])
-
-
     c = merge_clad(c, 0)
 
     return c
+
 
 @gf.cell
 def OpticalAligner(                              #optical alignment

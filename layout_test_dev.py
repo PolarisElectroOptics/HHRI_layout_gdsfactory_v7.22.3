@@ -55,6 +55,7 @@ combined_params = {**differential_electrode_params, **SilTerra_sipho_params, "gs
 _ = c << MRM_SilTerra(combined_params)
 _.movex(500).movey(250)
 
+
 combined_params = {**differential_electrode_params, **SilTerra_sipho_params, "gsgsg_variant": "DC", "s2s_type": "adiabatic",  #MMI, adiabatic, power
 
                     "w_slot": 0.20,
