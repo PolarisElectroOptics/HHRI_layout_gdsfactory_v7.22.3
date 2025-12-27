@@ -21,6 +21,7 @@ combined_params = {**differential_electrode_params, **SilTerra_sipho_params, "gs
 
                     "w_slot": 0.20,
                     "w_slotWG": 0.20,
+                    "buffer_RIB_SLAB_overlay": 0.2,
                     "buffer_ETCH_HM_overlay": 0.1,
                     "S2S_ADIA_W": 0.4,
                     "S2S_ADIA_W0": 0.18,

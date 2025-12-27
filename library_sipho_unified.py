@@ -884,7 +884,7 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     y_p = np.concatenate((y_p, np.flip(y_S1_lower-(G+R-C2) - y_1)))
     P3 = gf.Polygon(list(zip(x_p, y_p)), layer=WG_HM)
     s_P3 = Polygon(zip(x_p, y_p))
-    s_P3 = s_P3.buffer(params["buffer_ETCH_HM_overlay"], join_style="mitre")
+    s_P3 = s_P3.buffer(params["buffer_ETCH_HM_overlay"], join_style="bevel")
     c_s_P3 = gf.Component()
     c_s_P3.add_polygon(s_P3, layer=WG_Strip)
     c << c_s_P3
