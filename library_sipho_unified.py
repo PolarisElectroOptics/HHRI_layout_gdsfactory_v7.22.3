@@ -908,18 +908,19 @@ combined_params = {**differential_electrode_params, **balun_sipho_params,  "MT1_
     s_LowRib_bot_expand = s_LowRib_bot.buffer(buffer_ETCH_HM_overlay, join_style="bevel")
     c.add_polygon(s_LowRib_bot, layer=WG_LowRib)
 
-
-    WG_Strip_coords = ([-L1-s2s_O_len_in, W/2-buffer_ETCH_HM_overlay], [-L1+1.7, L1_slope * ((-L1+2)+L1) + W/2], [L1, T/2],
+    x_cross_point = -L1+1.65
+    WG_Strip_coords = ([-L1-s2s_O_len_in, W/2-buffer_ETCH_HM_overlay], [L1, T/2+0.5],#[x_cross_point, L1_slope * ((x_cross_point)+L1) + W/2], [L1, T/2],
                        [L1, -T/2+buffer_ETCH_HM_overlay], [-L1-s2s_O_len_in, -W/2+buffer_ETCH_HM_overlay])
+    c_P7 = gf.Component()
     P7 = gf.Polygon(WG_Strip_coords, layer=(1, 0))
-    c_LowRib_top.add_polygon(P7)
+    c_P7.add_polygon(P7)
 
     coords = ([-L1-s2s_O_len_in, w_slab+w_slot/2+w_slotWG], [L1, w_slab+w_slot/2+w_slotWG], #left half of WG_Strip block
               [L1, -(w_slab+w_slot/2+w_slotWG)], [-L1-s2s_O_len_in, -(w_slab+w_slot/2+w_slotWG)])
     P6 = gf.Polygon(coords, layer=WG_Strip)
     c_P6 = gf.Component()
     c_P6.add_polygon(P6)
-    c_sub_result = gf.geometry.boolean(A=c_P6, B=c_LowRib_top, operation="not", layer=WG_Strip, precision=1e-12)
+    c_sub_result = gf.geometry.boolean(A=c_P6, B=c_P7, operation="not", layer=WG_Strip, precision=1e-12)
     c << c_sub_result
 
     # coords = ([-L1 - s2s_O_len_in, w_slab + w_slot / 2 + w_slotWG], [L1, w_slab + w_slot / 2 + w_slotWG],#[L1+L2+L3, w_slab + w_slot / 2 + w_slotWG],  # left half of WG_LowRib fill
